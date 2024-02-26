@@ -15,10 +15,8 @@ import com.william.notix.services.AuthService;
 import com.william.notix.services.FileService;
 import com.william.notix.services.UserService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-
 import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,8 +44,14 @@ public class Action {
                 .findById(callerPayload.getId())
                 .orElseThrow(UserNotFoundException::new);
 
-            Long imageId = Optional.of(caller.getImage()).map(File::getId).orElse(null);
-            String callerImageUrl = fileService.getFileInfo(imageId).map(FileDto::getUrl).orElse(null);
+            Long imageId = Optional
+                .of(caller.getImage())
+                .map(File::getId)
+                .orElse(null);
+            String callerImageUrl = fileService
+                .getFileInfo(imageId)
+                .map(FileDto::getUrl)
+                .orElse(null);
             return new Response<LoginDto>(HttpStatus.OK)
                 .setData(
                     new LoginDto()

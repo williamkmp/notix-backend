@@ -1,18 +1,14 @@
 package com.william.notix.services;
 
-import java.sql.Date;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.william.notix.dto.FileDto;
 import com.william.notix.entities.File;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.repositories.FileRepository;
-
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -24,15 +20,16 @@ public class FileService {
 
     /**
      * get file by id
-     * 
+     *
      * @param fileId {@link Long} file id
      * @return {@link Optional}<{@link File}> requested file, else empty if not found
      */
     public Optional<File> findById(Long fileId) {
         try {
-            File file = fileRepository.findById(fileId)
-            .orElseThrow(ResourceNotFoundException::new);
-            return Optional.of(file); 
+            File file = fileRepository
+                .findById(fileId)
+                .orElseThrow(ResourceNotFoundException::new);
+            return Optional.of(file);
         } catch (Exception e) {
             log.error("File not found id:{}", fileId);
             e.printStackTrace();
@@ -42,7 +39,7 @@ public class FileService {
 
     /**
      * save multipart-file request to the database
-     * 
+     *
      * @param file {@link MultipartFile} file
      * @return  {@link Optional}<{@link File}> saved file entity, else empty if failed
      */
@@ -69,26 +66,26 @@ public class FileService {
      *     <li>file size in BYTES</li>
      *     <li>file content-type</li>
      *     <li>file download URL</li>
-     * </ul> 
+     * </ul>
      * @param fileId {@link Long} fileid
-     * @return  {@link Optional}<{@link FileDto}> file information, else empty of there's an error generating file data or not found 
+     * @return  {@link Optional}<{@link FileDto}> file information, else empty of there's an error generating file data or not found
      */
     public Optional<FileDto> getFileInfo(Long fileId) {
         try {
-            File file = fileRepository.findById(fileId)
+            File file = fileRepository
+                .findById(fileId)
                 .orElseThrow(ResourceNotFoundException::new);
-            return Optional.of(new FileDto()
-                .setId(file.getId().toString())
-                .setName(file.getName())
-                .setContentType(file.getContentType())
-                .setUrl(GET_FILE_URL + file.getId().toString())
-                .setSize(Long.valueOf(file.getBytes().length))
+            return Optional.of(
+                new FileDto()
+                    .setId(file.getId().toString())
+                    .setName(file.getName())
+                    .setContentType(file.getContentType())
+                    .setUrl(GET_FILE_URL + file.getId().toString())
+                    .setSize(Long.valueOf(file.getBytes().length))
             );
-        } 
-        catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             return Optional.empty();
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Error generating file info id: {}", fileId);
             e.printStackTrace();
             return Optional.empty();

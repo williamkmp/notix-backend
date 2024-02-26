@@ -11,12 +11,8 @@ import com.william.notix.services.AuthService;
 import com.william.notix.services.FileService;
 import com.william.notix.utils.values.VALIDATION;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-
 import java.util.Optional;
-
-import javax.swing.text.html.Option;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,8 +37,14 @@ public class Action {
                 .generateTokens(userId)
                 .orElseThrow(Exception::new);
 
-            Long imageId = Optional.of(user.getImage()).map(File::getId).orElse(null);
-            String imageUrl = fileService.getFileInfo(imageId).map(FileDto::getUrl).orElse(null);
+            Long imageId = Optional
+                .of(user.getImage())
+                .map(File::getId)
+                .orElse(null);
+            String imageUrl = fileService
+                .getFileInfo(imageId)
+                .map(FileDto::getUrl)
+                .orElse(null);
 
             return new Response<LoginDto>()
                 .setData(

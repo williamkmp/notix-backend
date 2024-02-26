@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 public class FileDto {
+
     private String id;
     private String name;
     private Long size;
