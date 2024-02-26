@@ -6,8 +6,11 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -29,6 +32,8 @@ public class UserService {
             User savedUser = userRepository.save(newUser);
             return Optional.of(savedUser);
         } catch (Exception e) {
+            log.error("Failed registering user");
+            e.printStackTrace();
             return Optional.empty();
         }
     }
@@ -40,7 +45,13 @@ public class UserService {
      * @return {@link Optional}<{@link User}> registered user information, else empty if not found
      */
     public Optional<User> findById(Long userId) {
-        return userRepository.findById(userId);
+        try {
+            return userRepository.findById(userId);
+        } catch (Exception e) {
+            log.error("Error finding user id: {}", userId);
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     /**
