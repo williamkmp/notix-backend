@@ -8,6 +8,7 @@ import com.william.notix.exceptions.runtime.UserNotFoundException;
 import com.william.notix.repositories.FileRepository;
 import com.william.notix.repositories.UserRepository;
 import java.util.Optional;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,10 +31,13 @@ public class FileService {
      */
     public Optional<File> findById(Long fileId) {
         try {
+            if (fileId == null) throw new ResourceNotFoundException();
             File file = fileRepository
                 .findById(fileId)
                 .orElseThrow(ResourceNotFoundException::new);
             return Optional.of(file);
+        } catch (ResourceNotFoundException e) {
+            return Optional.empty();
         } catch (Exception e) {
             log.error("File not found id:{}", fileId);
             e.printStackTrace();
@@ -49,8 +53,8 @@ public class FileService {
      * @return  {@link Optional}<{@link File}> saved file entity, else empty if failed
      */
     public Optional<File> saveMultipartFile(
-        MultipartFile file,
-        Long uploaderId
+        @NonNull MultipartFile file,
+        @NonNull Long uploaderId
     ) {
         try {
             User uploader = userRepository
@@ -87,6 +91,7 @@ public class FileService {
      */
     public Optional<FileDto> getFileInfo(Long fileId) {
         try {
+            if (fileId == null) return Optional.empty();
             File file = fileRepository
                 .findById(fileId)
                 .orElseThrow(ResourceNotFoundException::new);

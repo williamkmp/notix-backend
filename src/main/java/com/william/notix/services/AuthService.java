@@ -108,7 +108,7 @@ public class AuthService {
      *     generation failed
      */
     @Transactional
-    private Optional<String> generateAccessToken(Long userId) {
+    private Optional<String> generateAccessToken(@NonNull Long userId) {
         Optional<User> maybeUser = userRepository.findById(userId);
 
         if (maybeUser.isEmpty()) return Optional.empty();
