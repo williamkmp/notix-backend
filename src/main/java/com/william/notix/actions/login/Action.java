@@ -38,7 +38,7 @@ public class Action {
                 .orElseThrow(Exception::new);
 
             Long imageId = Optional
-                .of(user.getImage())
+                .ofNullable(user.getImage())
                 .map(File::getId)
                 .orElse(null);
             String imageUrl = fileService

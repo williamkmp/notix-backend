@@ -45,7 +45,7 @@ public class Action {
                 .orElseThrow(UserNotFoundException::new);
 
             Long imageId = Optional
-                .of(caller.getImage())
+                .ofNullable(caller.getImage())
                 .map(File::getId)
                 .orElse(null);
             String callerImageUrl = fileService
