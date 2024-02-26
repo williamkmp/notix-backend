@@ -54,6 +54,21 @@ public class UserService {
     }
 
     /**
+     * save new user, or update existing user
+     *
+     * @param user {@link User} user data
+     * @return {@link Optional}<{@link User}> user data, else empty of operation failed
+     */
+    public Optional<User> save(User user) {
+        try {
+            User savedUser = userRepository.saveAndFlush(user);
+            return Optional.of(savedUser);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
      * check if a given email is available
      *
      * @param email {@link String} email
