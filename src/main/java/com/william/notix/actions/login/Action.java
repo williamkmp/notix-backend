@@ -5,12 +5,14 @@ import com.william.notix.dto.TokenDto;
 import com.william.notix.dto.UserDto;
 import com.william.notix.dto.response.Response;
 import com.william.notix.entities.User;
-import com.william.notix.exceptions.http.UnauthorizedHttpException;
-import com.william.notix.exceptions.runtime.UnauthorizedException;
 import com.william.notix.services.AuthService;
 import com.william.notix.services.ImageService;
+import com.william.notix.utils.values.VALIDATION;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,12 +29,12 @@ public class Action {
         try {
             User user = authService
                 .loginUser(request.getEmail(), request.getPassword())
-                .orElseThrow(UnauthorizedException::new);
+                .orElseThrow(Exception::new);
 
             Long userId = user.getId();
             TokenDto userToken = authService
                 .generateTokens(userId)
-                .orElseThrow(UnauthorizedException::new);
+                .orElseThrow(Exception::new);
 
             String imageUrl = imageService.getUserImageUrl(userId).orElse(null);
 
@@ -48,8 +50,10 @@ public class Action {
                         )
                         .setToken(userToken)
                 );
-        } catch (Exception e) {
-            throw new UnauthorizedHttpException();
+        }
+        catch (Exception e) {
+            return new Response<LoginDto>(HttpStatus.BAD_REQUEST)
+                .setRootError(VALIDATION.INVALID_CREDENTIAL);
         }
     }
 }
