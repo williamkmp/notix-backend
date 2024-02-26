@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 public class FileDto {
 
     private String id;
+    private String uploaderId;
     private String name;
     private Long size;
     private String url;
