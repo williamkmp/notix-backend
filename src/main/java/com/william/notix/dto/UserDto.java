@@ -16,5 +16,5 @@ public class UserDto {
 
     @NonNull private String fullName;
 
-    private String imageUrl;
+    private String imageId;
 }

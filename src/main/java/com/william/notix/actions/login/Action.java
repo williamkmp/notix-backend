@@ -1,6 +1,5 @@
 package com.william.notix.actions.login;
 
-import com.william.notix.dto.FileDto;
 import com.william.notix.dto.LoginDto;
 import com.william.notix.dto.TokenDto;
 import com.william.notix.dto.UserDto;
@@ -8,7 +7,6 @@ import com.william.notix.dto.response.Response;
 import com.william.notix.entities.File;
 import com.william.notix.entities.User;
 import com.william.notix.services.AuthService;
-import com.william.notix.services.FileService;
 import com.william.notix.utils.values.VALIDATION;
 import jakarta.validation.Valid;
 import java.util.Optional;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class Action {
 
     private final AuthService authService;
-    private final FileService fileService;
 
     @PostMapping("/api/auth/login")
     public Response<LoginDto> action(@RequestBody @Valid Request request) {
@@ -41,10 +38,6 @@ public class Action {
                 .ofNullable(user.getImage())
                 .map(File::getId)
                 .orElse(null);
-            String imageUrl = fileService
-                .getFileInfo(imageId)
-                .map(FileDto::getUrl)
-                .orElse(null);
 
             return new Response<LoginDto>()
                 .setData(
@@ -54,7 +47,9 @@ public class Action {
                                 .setId(user.getId().toString())
                                 .setEmail(user.getEmail())
                                 .setFullName(user.getFullName())
-                                .setImageUrl(imageUrl)
+                                .setImageId(
+                                    imageId != null ? imageId.toString() : null
+                                )
                         )
                         .setToken(userToken)
                 );
