@@ -35,7 +35,7 @@ public class UserService {
 
     /**
      * find user by id
-     * 
+     *
      * @param userId {@link Long} user id
      * @return {@link Optional}<{@link User}> registered user information, else empty if not found
      */

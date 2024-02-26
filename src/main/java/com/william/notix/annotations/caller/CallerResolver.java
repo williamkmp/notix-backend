@@ -5,7 +5,6 @@ import com.william.notix.entities.User;
 import com.william.notix.exceptions.http.UnauthorizedHttpException;
 import com.william.notix.services.UserService;
 import com.william.notix.utils.values.KEY;
-
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;

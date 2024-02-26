@@ -8,10 +8,8 @@ import com.william.notix.entities.User;
 import com.william.notix.services.AuthService;
 import com.william.notix.services.ImageService;
 import com.william.notix.utils.values.VALIDATION;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,8 +48,7 @@ public class Action {
                         )
                         .setToken(userToken)
                 );
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return new Response<LoginDto>(HttpStatus.BAD_REQUEST)
                 .setRootError(VALIDATION.INVALID_CREDENTIAL);
         }

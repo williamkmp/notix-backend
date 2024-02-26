@@ -1,16 +1,14 @@
 package com.william.notix.configurations;
 
+import com.william.notix.annotations.caller.CallerResolver;
+import com.william.notix.interceptors.AuthInterceptor;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import com.william.notix.annotations.caller.CallerResolver;
-import com.william.notix.interceptors.AuthInterceptor;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
@@ -32,7 +30,9 @@ public class WebConfiguration implements WebMvcConfigurer {
     }
 
     @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+    public void addArgumentResolvers(
+        List<HandlerMethodArgumentResolver> resolvers
+    ) {
         resolvers.add(callerResolver);
     }
 }
