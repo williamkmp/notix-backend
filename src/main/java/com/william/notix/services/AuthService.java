@@ -21,16 +21,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    @Value("${app.security.jwt.access_token.duration:300000}")
+    @Value("${app.security.jwt.access_token.duration}")
     Long ACCESS_TOKEN_DURATION_MS;
 
-    @Value("${app.security.jwt.refresh_token.duration:86400000}")
+    @Value("${app.security.jwt.refresh_token.duration}")
     Long REFRESH_TOKEN_DURATION_MS;
 
-    @Value("${app.security.jwt.access_token.secret:SECRET_123}")
+    @Value("${app.security.jwt.access_token.secret}")
     String ACCESS_TOKEN_SECRET;
 
-    @Value("${app.security.jwt.refresh_token.secret:SECRET_456}")
+    @Value("${app.security.jwt.refresh_token.secret}")
     String REFRESH_TOKEN_SECRET;
 
     private final Gson gson;
@@ -116,7 +116,8 @@ public class AuthService {
         User user = maybeUser.get();
         JwtPayloadDto tokenPayload = new JwtPayloadDto()
             .setId(user.getId())
-            .setEmail(user.getEmail());
+            .setEmail(user.getEmail())
+            .setFullName(user.getFullName());
 
         return signPayload(
             ACCESS_TOKEN_SECRET,

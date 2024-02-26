@@ -12,7 +12,7 @@ public class JwtPayloadDto {
 
     @NonNull private Long id;
 
-    @NonNull private String tagName;
+    @NonNull private String fullName;
 
     @NonNull private String email;
 }
