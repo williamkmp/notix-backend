@@ -7,6 +7,7 @@ import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.exceptions.runtime.UserNotFoundException;
 import com.william.notix.repositories.FileRepository;
 import com.william.notix.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -73,6 +74,71 @@ public class FileService {
             log.error("Error saving file");
             e.printStackTrace();
             return Optional.empty();
+        }
+    }
+
+    /**
+     * update existing user image
+     *
+     * @param userId {@link Long} user id, not null
+     * @param newImageId {@link Long} file id, not null
+     * @return {@link Optional}<{@link FileDto}> image file information
+     */
+    @Transactional
+    public Optional<FileDto> updateUserImage(
+        @NonNull Long userId,
+        @NonNull Long newImageId
+    ) {
+        try {
+            User user = userRepository
+                .findById(userId)
+                .orElseThrow(ResourceNotFoundException::new);
+            File previousImage = user.getImage();
+            if (
+                previousImage != null &&
+                !previousImage.getId().equals(newImageId)
+            ) {
+                fileRepository.delete(previousImage);
+            }
+            File newImage = fileRepository
+                .findById(newImageId)
+                .orElseThrow(ResourceNotFoundException::new);
+            user.setImage(newImage);
+            userRepository.save(user);
+            FileDto fileInfo = getFileInfo(newImageId)
+                .orElseThrow(Exception::new);
+            return Optional.of(fileInfo);
+        } catch (ResourceNotFoundException e) {
+            return Optional.empty();
+        } catch (Exception e) {
+            log.error(
+                "Error updating user image, userId: {}, imageId: {}",
+                userId,
+                newImageId
+            );
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * delete existing user image
+     * @param userId {@link Long} user id, not null
+     */
+    public void deleteUserImage(@NonNull Long userId) {
+        try {
+            User user = userRepository
+                .findById(userId)
+                .orElseThrow(ResourceNotFoundException::new);
+            File previousImage = user.getImage();
+            if (previousImage != null) {
+                fileRepository.delete(previousImage);
+            }
+            user.setImage(null);
+            userRepository.saveAndFlush(user);
+        } catch (Exception e) {
+            log.error("Error deleting user image, userId: {}", userId);
+            e.printStackTrace();
         }
     }
 

@@ -49,30 +49,26 @@ public class Action {
             }
 
             Optional<Long> requestImageId = parseLong(request.getImageId());
-
             user.setEmail(request.getEmail());
             user.setFullName(request.getFullName());
-            user.setImage(
-                requestImageId.isPresent()
-                    ? fileService
-                        .findById(requestImageId.get())
-                        .orElseThrow(ResourceNotFoundException::new)
-                    : null
-            );
 
-            User updatedUser = userService
-                .save(user)
-                .orElseThrow(Exception::new);
+            if (requestImageId.isPresent()) {
+                fileService.updateUserImage(user.getId(), requestImageId.get());
+            } else {
+                fileService.deleteUserImage(user.getId());
+            }
+
+            userService.save(user);
 
             return new Response<UserDto>()
                 .setData(
                     new UserDto()
-                        .setId(updatedUser.getId().toString())
-                        .setEmail(updatedUser.getEmail())
-                        .setFullName(updatedUser.getFullName())
+                        .setId(user.getId().toString())
+                        .setEmail(user.getEmail())
+                        .setFullName(user.getFullName())
                         .setImageId(
-                            updatedUser.getImage() != null
-                                ? updatedUser.getImage().getId().toString()
+                            requestImageId.isPresent()
+                                ? requestImageId.get().toString()
                                 : null
                         )
                 )
