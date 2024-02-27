@@ -1,6 +1,5 @@
 package com.william.notix.actions.get_file;
 
-import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.entities.File;
 import com.william.notix.exceptions.http.InternalServerErrorHttpException;
 import com.william.notix.exceptions.http.ResourceNotFoundHttpException;
@@ -22,7 +21,6 @@ public class Action {
     private final FileService fileService;
 
     @GetMapping("/api/file/{fileId}")
-    @Authenticated(true)
     public ResponseEntity<byte[]> action(@PathVariable("fileId") Long fileId) {
         try {
             File file = fileService
