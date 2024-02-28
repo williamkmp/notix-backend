@@ -20,6 +20,9 @@ public class VALIDATION {
     public static final String STRING_ALPHANUM = "string_alphanum";
     public static final String STRING_LENGTH = "string_between:";
 
+    // datetime validation
+    public static final String DTM_FUTURE = "dtm_future";
+
     // number validation
     public static final String NUMBER_MIN = "number.min:";
     public static final String NUMBER_MAX = "number.max:";
