@@ -10,7 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,10 +32,10 @@ public class Project {
     private String name = "";
 
     @Column(name = "start_date", nullable = false)
-    private OffsetDateTime startDate;
+    private Date startDate;
 
     @Column(name = "end_date", nullable = false)
-    private OffsetDateTime endDate;
+    private Date endDate;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id", nullable = false)
@@ -43,7 +43,7 @@ public class Project {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
-    private OffsetDateTime createdAt;
+    private Date createdAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
     private List<Authority> memberAuthorities;
