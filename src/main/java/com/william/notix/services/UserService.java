@@ -2,6 +2,8 @@ package com.william.notix.services;
 
 import com.william.notix.entities.User;
 import com.william.notix.repositories.UserRepository;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
@@ -54,12 +56,43 @@ public class UserService {
     }
 
     /**
+     * search users by email address containing string
+     *
+     * @param searchEmail {@link String} email search query
+     * @return {@link List}<{@link User}> search result
+     */
+    public List<User> searchByEmail(@NonNull String email) {
+        return userRepository.searchByEmail("%" + email + "%");
+    }
+
+    /**
+     * search users by email address, excluding all member and project owner with a certain project id
+     *
+     * @param searchEmail {@link String} email search query
+     * @param projectId {@link Long} excluded project id
+     * @return {@link List}<{@link User}> search result
+     */
+    public List<User> searchByEmailEcludingProject(
+        @NonNull String email,
+        @NonNull Long projectId
+    ) {
+        try {
+            return userRepository.searchByEmailExcludingProject(
+                "%" + email + "%",
+                projectId
+            );
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
+    /**
      * save new user, or update existing user
      *
      * @param user {@link User} user data
      * @return {@link Optional}<{@link User}> user data, else empty of operation failed
      */
-    public Optional<User> save(User user) {
+    public Optional<User> save(@NonNull User user) {
         try {
             User savedUser = userRepository.saveAndFlush(user);
             return Optional.of(savedUser);
