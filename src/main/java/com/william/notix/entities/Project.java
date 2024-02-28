@@ -41,6 +41,10 @@ public class Project {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "image_id", referencedColumnName = "id", nullable = true)
+    private File image;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
