@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -25,6 +26,14 @@ public class GlobalExceptionCatcher {
         log.error("Unhandled exception occured", exception);
         return new Response<Object>(HttpStatus.INTERNAL_SERVER_ERROR)
             .setMessage(MESSAGES.ERROR_INTERNAL_SERVER);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public Response<Object> missingRequestParameterException(
+        MissingServletRequestParameterException exception
+    ) {
+        return new Response<>(HttpStatus.BAD_REQUEST)
+            .setMessage(exception.getMessage());
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
