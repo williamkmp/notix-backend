@@ -1,4 +1,4 @@
-package com.william.notix.actions.update_user;
+package com.william.notix.actions.user_update;
 
 import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;

@@ -1,4 +1,4 @@
-package com.william.notix.actions.login;
+package com.william.notix.actions.auth_login;
 
 import com.william.notix.utils.values.PATTERN;
 import com.william.notix.utils.values.VALIDATION;

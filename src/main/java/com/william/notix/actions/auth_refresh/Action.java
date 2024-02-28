@@ -1,4 +1,4 @@
-package com.william.notix.actions.refresh;
+package com.william.notix.actions.auth_refresh;
 
 import com.william.notix.dto.JwtPayloadDto;
 import com.william.notix.dto.LoginDto;

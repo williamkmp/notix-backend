@@ -1,4 +1,4 @@
-package com.william.notix.actions.get_file;
+package com.william.notix.actions.file_download;
 
 import com.william.notix.entities.File;
 import com.william.notix.exceptions.http.InternalServerErrorHttpException;

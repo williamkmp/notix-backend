@@ -1,4 +1,4 @@
-package com.william.notix.actions.login;
+package com.william.notix.actions.auth_login;
 
 import com.william.notix.dto.LoginDto;
 import com.william.notix.dto.TokenDto;

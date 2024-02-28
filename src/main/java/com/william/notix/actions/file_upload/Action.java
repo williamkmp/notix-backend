@@ -1,4 +1,4 @@
-package com.william.notix.actions.upload_file;
+package com.william.notix.actions.file_upload;
 
 import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;

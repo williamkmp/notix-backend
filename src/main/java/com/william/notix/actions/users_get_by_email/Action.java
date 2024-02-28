@@ -1,4 +1,4 @@
-package com.william.notix.actions.get_users_by_email;
+package com.william.notix.actions.users_get_by_email;
 
 import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.dto.UserDto;

@@ -1,4 +1,4 @@
-package com.william.notix.actions.register;
+package com.william.notix.actions.user_register;
 
 import com.william.notix.dto.LoginDto;
 import com.william.notix.dto.TokenDto;

@@ -1,4 +1,4 @@
-package com.william.notix.actions.ping;
+package com.william.notix.actions.app_ping;
 
 import com.william.notix.dto.response.Response;
 import java.time.OffsetDateTime;
