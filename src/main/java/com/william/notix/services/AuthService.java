@@ -59,7 +59,7 @@ public class AuthService {
         }
     }
 
-    public Optional<TokenDto> generateTokens(Long userid) {
+    public Optional<TokenDto> generateTokens(@NonNull Long userid) {
         Optional<String> maybeAccessToken = generateAccessToken(userid);
         Optional<String> maybeRefreshtoken = generateRefreshToken(userid);
 
@@ -134,7 +134,7 @@ public class AuthService {
      *     generation failed
      */
     @Transactional
-    private Optional<String> generateRefreshToken(Long userId) {
+    private Optional<String> generateRefreshToken(@NonNull Long userId) {
         Optional<User> maybeUser = userRepository.findById(userId);
 
         if (maybeUser.isEmpty()) return Optional.empty();
@@ -168,9 +168,9 @@ public class AuthService {
      *     secret, else Optional.empty() if generation process failed
      */
     public Optional<String> signPayload(
-        String secret,
-        Long duration,
-        JwtPayloadDto payload
+        @NonNull String secret,
+        @NonNull Long duration,
+        @NonNull JwtPayloadDto payload
     ) {
         Optional<String> token;
         try {
