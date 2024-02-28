@@ -15,11 +15,13 @@ import com.william.notix.services.UserService;
 import jakarta.validation.Valid;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+@Slf4j
 @Controller("refreshToken")
 @RequiredArgsConstructor
 public class Action {
@@ -63,6 +65,11 @@ public class Action {
         } catch (UserNotFoundException e) {
             throw new UnauthorizedHttpException();
         } catch (Exception e) {
+            log.error(
+                "Error [POST] /api/auth/refresh request:{}",
+                request.toString()
+            );
+            e.printStackTrace();
             throw new InternalServerErrorHttpException();
         }
     }

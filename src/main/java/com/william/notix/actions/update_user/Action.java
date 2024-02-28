@@ -74,12 +74,15 @@ public class Action {
                 )
                 .setMessage(MESSAGES.UPDATE_SUCCESS);
         } catch (ResourceNotFoundException e) {
-            log.error("Error, updating user, userId: {}", user.getId());
+            log.error(
+                "ResourceNotFoundException [PUT] /api/user, request: {}",
+                request.toString()
+            );
             log.error("Image not found, imageId: {}", request.getImageId());
             e.printStackTrace();
             throw new ResourceNotFoundHttpException();
         } catch (Exception e) {
-            log.error("Error, updating user, userId: {}", user.getId());
+            log.error("Error [PUT] /api/user, request: {}", request.toString());
             e.printStackTrace();
             throw new InternalServerErrorHttpException();
         }

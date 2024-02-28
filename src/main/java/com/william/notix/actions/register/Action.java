@@ -11,11 +11,13 @@ import com.william.notix.services.UserService;
 import com.william.notix.utils.values.VALIDATION;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+@Slf4j
 @Controller("registerAction")
 @RequiredArgsConstructor
 public class Action {
@@ -60,6 +62,11 @@ public class Action {
                         .setToken(userTokens)
                 );
         } catch (Exception e) {
+            log.error(
+                "Error [POST] /api/uath/register, request:{}",
+                request.toString()
+            );
+            e.printStackTrace();
             throw new InternalServerErrorHttpException();
         }
     }

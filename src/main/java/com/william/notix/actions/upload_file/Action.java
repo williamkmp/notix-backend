@@ -37,7 +37,7 @@ public class Action {
                 .orElseThrow(Exception::new);
             return new Response<FileDto>().setData(fileInformation);
         } catch (Exception e) {
-            log.error("Error, uploading file by, userId: {}", uploader.getId());
+            log.error("Error [POST] /api/file, callerId: {}", uploader.getId());
             e.printStackTrace();
             throw new InternalServerErrorHttpException();
         }

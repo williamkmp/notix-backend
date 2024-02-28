@@ -40,7 +40,7 @@ public class Action {
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundHttpException();
         } catch (Exception e) {
-            log.error("Error, GET file id: {}", fileId);
+            log.error("Error [GET] /api/file/{}", fileId);
             e.printStackTrace();
             throw new InternalServerErrorHttpException();
         }
