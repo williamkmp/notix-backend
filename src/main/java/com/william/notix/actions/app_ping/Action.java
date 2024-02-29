@@ -1,7 +1,7 @@
 package com.william.notix.actions.app_ping;
 
 import com.william.notix.dto.response.Response;
-import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.Map;
 import org.springframework.boot.system.JavaVersion;
 import org.springframework.core.SpringVersion;
@@ -26,7 +26,7 @@ public class Action {
                         "server-version",
                         "spring-" + SpringVersion.getVersion()
                     ),
-                    Map.entry("server-time", OffsetDateTime.now())
+                    Map.entry("server-time", new Date())
                 )
             );
     }
