@@ -27,7 +27,6 @@ public class ProjectSeeder implements Seeder {
     private final ProjectService projectService;
     
     @Override
-    @Transactional
     public void run() throws Exception {
         User william = userService.findById(1l)
             .orElseThrow(UserNotFoundException::new);
