@@ -11,7 +11,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         """
             SELECT p
             FROM projects p
-            JOIN p.memberAuthorities a
+            LEFT JOIN p.memberAuthorities a
             WHERE a.user.id = :userId OR p.owner.id = :userId
         """
     )
