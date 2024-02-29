@@ -1,18 +1,16 @@
 package com.william.notix.seeders.imp;
 
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
 import com.william.notix.entities.User;
 import com.william.notix.seeders.Seeder;
 import com.william.notix.services.UserService;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 @Order(1)
 @Component
 @RequiredArgsConstructor
-public class UserSeeder implements Seeder{
+public class UserSeeder implements Seeder {
 
     private final UserService userService;
 
@@ -39,5 +37,4 @@ public class UserSeeder implements Seeder{
                 .setPassword("password")
         );
     }
-    
 }

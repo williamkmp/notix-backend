@@ -5,13 +5,11 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -49,7 +47,11 @@ public class SeedRunner implements CommandLineRunner {
 
     private List<Seeder> orderSeeders() {
         List<Seeder> orderedSeeders = new ArrayList<>(seeders);
-        orderedSeeders.sort(Comparator.comparingInt(o -> o.getClass().getAnnotation(Order.class).value()));
+        orderedSeeders.sort(
+            Comparator.comparingInt(o ->
+                o.getClass().getAnnotation(Order.class).value()
+            )
+        );
         return orderedSeeders;
     }
 }
