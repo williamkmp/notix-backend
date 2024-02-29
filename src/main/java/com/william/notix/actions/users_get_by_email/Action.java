@@ -24,7 +24,7 @@ public class Action {
 
     @Authenticated(true)
     @GetMapping("/api/users")
-    public Response<List<UserDto>> getMethodName(
+    public Response<UserDto[]> getMethodName(
         @RequestParam(required = true) String email,
         @RequestParam(required = false) Optional<Long> excludeProject
     ) {
@@ -36,19 +36,19 @@ public class Action {
                 )
                 : userService.searchByEmail(email);
 
-            return new Response<List<UserDto>>()
-                .setData(
-                    searchResults
-                        .stream()
-                        .map(user ->
-                            new UserDto()
-                                .setId(user.getId().toString())
-                                .setEmail(user.getEmail())
-                                .setFullName(user.getFullName())
-                                .setImageId(getImageId(user).orElse(null))
-                        )
-                        .toList()
-                );
+            List<UserDto> resultList = searchResults
+                .stream()
+                .map(user ->
+                    new UserDto()
+                        .setId(user.getId().toString())
+                        .setEmail(user.getEmail())
+                        .setFullName(user.getFullName())
+                        .setImageId(getImageId(user).orElse(null))
+                )
+                .toList();
+
+            return new Response<UserDto[]>()
+                .setData(resultList.toArray(new UserDto[0]));
         } catch (Exception e) {
             if (excludeProject.isPresent()) {
                 log.error(
