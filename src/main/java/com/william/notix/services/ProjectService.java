@@ -74,6 +74,16 @@ public class ProjectService {
     }
 
     /**
+     * get a project by a given id
+     * 
+     * @param projectId {@link Long} project id
+     * @return {@link Optional}<{@link Project}>
+     */
+    public Optional<Project> findById(@NonNull Long projectId) {
+        return projectRepository.findById(projectId); 
+    } 
+
+    /**
      * add an existing user to a project as a member, and notifying invited user
      *
      * @param projectId {@link Long} project id
