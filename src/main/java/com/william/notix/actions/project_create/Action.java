@@ -52,25 +52,9 @@ public class Action {
                 .ofNullable(request.getInvites())
                 .orElse(Collections.emptyList());
             for (InviteDto invite : invites) {
-                Optional<User> newMember = projectService.addMember(
+                projectService.addMember(
                     createdProject.getId(),
                     invite
-                );
-                if (newMember.isEmpty()) {
-                    continue;
-                }
-                User member = newMember.get();
-                socket.convertAndSend(
-                    TOPIC.userProjectPreviews(member.getId()),
-                    new ProjectPreviewDto()
-                        .setAction(PREVIEW_ACTION.ADD)
-                        .setId(createdProject.getId().toString())
-                        .setName(createdProject.getName())
-                        .setImageId(
-                            createdProject.getImage() != null
-                                ? createdProject.getImage().getId().toString()
-                                : null
-                        )
                 );
             }
 
