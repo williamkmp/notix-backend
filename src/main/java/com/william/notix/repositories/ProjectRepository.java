@@ -13,6 +13,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
             FROM projects p
             LEFT JOIN p.memberAuthorities a
             WHERE a.user.id = :userId OR p.owner.id = :userId
+            ORDER BY p.createdAt DESC
         """
     )
     public List<Project> findAllByUser(@Param("userId") Long userId);
