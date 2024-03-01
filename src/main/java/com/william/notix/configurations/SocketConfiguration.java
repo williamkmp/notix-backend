@@ -20,9 +20,9 @@ public class SocketConfiguration implements WebSocketMessageBrokerConfigurer {
     private final Gson gson;
 
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic");
-        registry.setApplicationDestinationPrefixes("/app");
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.setApplicationDestinationPrefixes("/app");
+        config.enableSimpleBroker("/topic");
     }
 
     @Override
