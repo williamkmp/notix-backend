@@ -1,12 +1,18 @@
 package com.william.notix.services;
 
+import com.william.notix.dto.InviteDto;
+import com.william.notix.entities.Authority;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
+import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.exceptions.runtime.UserNotFoundException;
+import com.william.notix.repositories.AuthorityRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserRepository;
+import com.william.notix.utils.values.ROLE;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +24,7 @@ public class ProjectService {
 
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
+    private final AuthorityRepository authorityRepository;
 
     /**
      * insert a new project
@@ -59,5 +66,50 @@ public class ProjectService {
             .findById(userId)
             .orElseThrow(UserNotFoundException::new);
         return projectRepository.findAllByUser(user.getId());
+    }
+
+    /**
+     *
+     * @param projectId
+     * @param invite
+     * @return
+     */
+    @Transactional
+    public Optional<User> addMember(
+        @NonNull Long projectId,
+        @NonNull InviteDto invite
+    ) {
+        try {
+            User newMember = userRepository
+                .findByEmail(invite.getEmail())
+                .orElseThrow(UserNotFoundException::new);
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(ResourceNotFoundException::new);
+            ROLE memberRole = Optional
+                .ofNullable(invite.getRole())
+                .orElse(ROLE.VIEWER);
+
+            Long ownerId = project.getOwner().getId();
+            Long memberId = newMember.getId();
+
+            if (Objects.equals(ownerId, memberId)) {
+                return Optional.of(project.getOwner());
+            }
+
+            authorityRepository.save(
+                new Authority()
+                    .setProject(project)
+                    .setUser(newMember)
+                    .setRole(memberRole)
+            );
+
+            return Optional.of(newMember);
+        } catch (UserNotFoundException e) {
+            return Optional.empty();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 }
