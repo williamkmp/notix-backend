@@ -1,8 +1,5 @@
 package com.william.notix.services;
 
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
-
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.entities.UserLog;
@@ -11,24 +8,25 @@ import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserLogRespository;
 import com.william.notix.repositories.UserRepository;
 import com.william.notix.utils.values.TOPIC;
-
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class LogService {
-    
+
     private final UserLogRespository userLogRespository;
     private final ProjectRepository projectRepository;
-    private final UserRepository userRepository; 
+    private final UserRepository userRepository;
     private final SimpMessagingTemplate socket;
 
     /**
      * logged user is invited to a project by another user
-     * 
-     * @param inviterId {@link Long} user id, who sent the invite 
+     *
+     * @param inviterId {@link Long} user id, who sent the invite
      * @param inviteeId {@link Long} user id, who receives the invite
      * @param projectId {@link Long} project id
      */
@@ -39,19 +37,24 @@ public class LogService {
         @NonNull Long projectId
     ) {
         try {
-            User inviter = userRepository.findById(inviterId)
+            User inviter = userRepository
+                .findById(inviterId)
                 .orElseThrow(Exception::new);
-            User invitee = userRepository.findById(inviteeId)
+            User invitee = userRepository
+                .findById(inviteeId)
                 .orElseThrow(Exception::new);
-            Project project = projectRepository.findById(projectId)
+            Project project = projectRepository
+                .findById(projectId)
                 .orElseThrow(Exception::new);
 
             UserLog log = userLogRespository.save(
                 new UserLog()
-                    .setMessage("{{ user.fullName }} added you to project, \"{{ project.name }}\"")
+                    .setMessage(
+                        "{{ user.fullName }} added you to project, \"{{ project.name }}\""
+                    )
                     .setRefrencedProject(project)
                     .setRefrencedUser(inviter)
-                    .setUpdatee(invitee)   
+                    .setUpdatee(invitee)
             );
 
             socket.convertAndSend(

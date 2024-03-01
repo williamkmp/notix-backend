@@ -13,14 +13,12 @@ import com.william.notix.repositories.UserRepository;
 import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
-
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -77,7 +75,7 @@ public class ProjectService {
 
     /**
      * add an existing user to a project as a member, and notifying invited user
-     * 
+     *
      * @param projectId {@link Long} project id
      * @param invite {@link InviteDto} invite data
      * @return {@link Optional}<{@link User}> invited user, else empty if add operation failed
@@ -112,7 +110,7 @@ public class ProjectService {
                     .setRole(memberRole)
             );
 
-             socket.convertAndSend(
+            socket.convertAndSend(
                 TOPIC.userProjectPreviews(newMember.getId()),
                 new ProjectPreviewDto()
                     .setAction(PREVIEW_ACTION.ADD)

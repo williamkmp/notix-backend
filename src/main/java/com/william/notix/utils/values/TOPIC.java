@@ -25,5 +25,4 @@ public class TOPIC {
     public static String userLogs(Long userId) {
         return "/topic/user/" + userId.toString() + "/logs";
     }
-
 }

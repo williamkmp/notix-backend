@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class UserlogDto {
+
     private String id;
     private String message;
     private String userId;
