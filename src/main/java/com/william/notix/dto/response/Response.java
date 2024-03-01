@@ -1,10 +1,10 @@
 package com.william.notix.dto.response;
 
 import com.william.notix.utils.values.KEY;
-import io.micrometer.common.lang.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;

@@ -1,9 +1,9 @@
 package com.william.notix.dto;
 
 import com.william.notix.utils.values.PREVIEW_ACTION;
-import io.micrometer.common.lang.NonNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.Accessors;
 
 @Data

@@ -1,9 +1,9 @@
 package com.william.notix.dto;
 
-import io.micrometer.common.lang.NonNull;
 import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.Accessors;
 
 @Data
