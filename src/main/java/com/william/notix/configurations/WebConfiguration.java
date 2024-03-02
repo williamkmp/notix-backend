@@ -1,9 +1,12 @@
 package com.william.notix.configurations;
 
 import com.william.notix.annotations.caller.CallerHttpResolver;
+import com.william.notix.annotations.session_uuid.SessionUuidHttpResolver;
 import com.william.notix.interceptors.AuthInterceptor;
+
+import lombok.RequiredArgsConstructor;
+
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,13 +14,12 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfiguration implements WebMvcConfigurer {
 
-    @Autowired
-    private AuthInterceptor authInterceptor;
-
-    @Autowired
-    private CallerHttpResolver callerHttpResolver;
+    private final AuthInterceptor authInterceptor;
+    private final CallerHttpResolver callerHttpResolver;
+    private final SessionUuidHttpResolver sessionUuidHttpResolver;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -34,5 +36,6 @@ public class WebConfiguration implements WebMvcConfigurer {
         List<HandlerMethodArgumentResolver> resolvers
     ) {
         resolvers.add(callerHttpResolver);
+        resolvers.add(sessionUuidHttpResolver);
     }
 }
