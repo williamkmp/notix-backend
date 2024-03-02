@@ -52,6 +52,7 @@ public class Action {
                         .setStartDate(project.getStartDate())
                         .setEndDate(project.getEndDate())
                         .setImageId(projectImageId)
+                        .setOwnerId(project.getOwner().getId().toString())
                         .setRole(userRole)
                 );
         } catch (ResourceNotFoundException e) {
