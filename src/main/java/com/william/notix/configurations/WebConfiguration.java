@@ -1,6 +1,6 @@
 package com.william.notix.configurations;
 
-import com.william.notix.annotations.caller.CallerResolver;
+import com.william.notix.annotations.caller.CallerHttpResolver;
 import com.william.notix.interceptors.AuthInterceptor;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     private AuthInterceptor authInterceptor;
 
     @Autowired
-    private CallerResolver callerResolver;
+    private CallerHttpResolver callerHttpResolver;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -33,6 +33,6 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addArgumentResolvers(
         List<HandlerMethodArgumentResolver> resolvers
     ) {
-        resolvers.add(callerResolver);
+        resolvers.add(callerHttpResolver);
     }
 }

@@ -1,6 +1,8 @@
 package com.william.notix.configurations;
 
 import com.google.gson.Gson;
+import com.william.notix.annotations.caller.CallerStompResolver;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class SocketConfiguration implements WebSocketMessageBrokerConfigurer {
 
     private final Gson gson;
+    private final CallerStompResolver callerStompResolver;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -46,7 +49,7 @@ public class SocketConfiguration implements WebSocketMessageBrokerConfigurer {
         List<HandlerMethodArgumentResolver> resolvers
     ) {
         WebSocketMessageBrokerConfigurer.super.addArgumentResolvers(resolvers);
-        // resolvers.add(senderResolver);
+        resolvers.add(callerStompResolver);
         // resolvers.add(senderSessionResolver);
     }
 }

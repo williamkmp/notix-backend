@@ -17,7 +17,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 @RequiredArgsConstructor
-public class CallerResolver implements HandlerMethodArgumentResolver {
+public class CallerHttpResolver implements HandlerMethodArgumentResolver {
 
     private final UserService userService;
 
