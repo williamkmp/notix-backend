@@ -18,12 +18,12 @@ public class KEY {
     public static final String RESPONSE_ERROR_ROOT = "@root";
 
     /**
-     * STOMP Header key for accessing caller's user id 
+     * STOMP Header key for accessing caller's user id
      */
     public static final String STOMP_CALLER_USER_ID = "CallerId";
 
     /**
-     * Header key for accessing caller's user id in STOMP Frame or HTTP  
+     * Header key for accessing caller's user id in STOMP Frame or HTTP
      */
     public static final String CALLER_SESSION_UUID = "SessionUUID";
 }

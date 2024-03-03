@@ -14,7 +14,6 @@ import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.services.AuthorityService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.ROLE;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -36,7 +35,8 @@ public class Action {
         @Caller User caller
     ) {
         try {
-            Project project = projectService.findById(projectId)
+            Project project = projectService
+                .findById(projectId)
                 .orElseThrow(ResourceNotFoundException::new);
             ROLE userRole = authorityService
                 .getUserProjectRole(caller.getId(), projectId)

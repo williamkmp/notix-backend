@@ -3,10 +3,8 @@ package com.william.notix.configurations;
 import com.william.notix.annotations.caller.CallerHttpResolver;
 import com.william.notix.annotations.session_uuid.SessionUuidHttpResolver;
 import com.william.notix.interceptors.AuthInterceptor;
-
-import lombok.RequiredArgsConstructor;
-
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

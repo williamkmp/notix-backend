@@ -3,7 +3,6 @@ package com.william.notix.configurations;
 import com.google.gson.Gson;
 import com.william.notix.annotations.caller.CallerStompResolver;
 import com.william.notix.annotations.session_uuid.SessionUuidStompResolver;
-
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
