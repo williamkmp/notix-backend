@@ -6,6 +6,7 @@ import com.william.notix.entities.ProjectLogDto;
 import com.william.notix.entities.User;
 import com.william.notix.entities.UserLog;
 import com.william.notix.entities.UserlogDto;
+import com.william.notix.repositories.ProjectLogRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserLogRespository;
 import com.william.notix.repositories.UserRepository;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 public class LogService {
 
     private final UserLogRespository userLogRespository;
+    private final ProjectLogRepository projectLogRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final SimpMessagingTemplate socket;
@@ -51,7 +53,7 @@ public class LogService {
                 .findById(projectId)
                 .orElseThrow(Exception::new);
 
-            UserLog log = userLogRespository.save(
+            UserLog log = userLogRespository.saveAndFlush(
                 new UserLog()
                     .setMessage(
                         "{{ user.fullName }} added you to project, \"{{ project.name }}\""
@@ -97,16 +99,18 @@ public class LogService {
                 .findById(projectId)
                 .orElseThrow(Exception::new);
 
-            ProjectLog log = new ProjectLog()
-                .setMessage(
-                    "{{ user.fullName }} changed project name from \"" +
-                    oldTitle +
-                    "\" to \"" +
-                    newTitle +
-                    "\""
-                )
-                .setRefrencedUser(updater)
-                .setUpdatee(project);
+            ProjectLog log = projectLogRepository.saveAndFlush(
+                new ProjectLog()
+                    .setMessage(
+                        "{{ user.fullName }} changed project name from \"" +
+                        oldTitle +
+                        "\" to \"" +
+                        newTitle +
+                        "\""
+                    )
+                    .setRefrencedUser(updater)
+                    .setUpdatee(project)
+            );
 
             socket.convertAndSend(
                 TOPIC.projectLogs(projectId),
@@ -139,12 +143,14 @@ public class LogService {
                 .findById(projectId)
                 .orElseThrow(Exception::new);
 
-            ProjectLog log = new ProjectLog()
-                .setMessage(
-                    "Project ownership transfered to \"{{ user.fullName }}\""
-                )
-                .setRefrencedUser(newOwner)
-                .setUpdatee(project);
+            ProjectLog log = projectLogRepository.saveAndFlush(
+                new ProjectLog()
+                    .setMessage(
+                        "Project ownership transfered to \"{{ user.fullName }}\""
+                    )
+                    .setRefrencedUser(newOwner)
+                    .setUpdatee(project)
+            );
 
             socket.convertAndSend(
                 TOPIC.projectLogs(projectId),
@@ -184,15 +190,17 @@ public class LogService {
                 .findById(projectId)
                 .orElseThrow(Exception::new);
 
-            ProjectLog log = new ProjectLog()
-                .setMessage(
-                    "\"{{ user.fullName }}\" changed project's active period to " +
-                    dtmFormatter.format(newStartDate) +
-                    " → " +
-                    dtmFormatter.format(newEndDate)
-                )
-                .setRefrencedUser(updater)
-                .setUpdatee(project);
+            ProjectLog log = projectLogRepository.saveAndFlush(
+                new ProjectLog()
+                    .setMessage(
+                        "\"{{ user.fullName }}\" changed project's active period to " +
+                        dtmFormatter.format(newStartDate) +
+                        " → " +
+                        dtmFormatter.format(newEndDate)
+                    )
+                    .setRefrencedUser(updater)
+                    .setUpdatee(project)
+            );
 
             socket.convertAndSend(
                 TOPIC.projectLogs(projectId),
