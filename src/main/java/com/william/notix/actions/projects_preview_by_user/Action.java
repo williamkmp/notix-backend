@@ -1,8 +1,8 @@
-package com.william.notix.actions.projects_by_user;
+package com.william.notix.actions.projects_preview_by_user;
 
 import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;
-import com.william.notix.dto.ProjectDto;
+import com.william.notix.dto.ProjectPreviewDto;
 import com.william.notix.dto.response.Response;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
@@ -21,22 +21,19 @@ public class Action {
 
     private final ProjectService projectService;
 
-    @GetMapping("/api/user/projects")
+    @GetMapping("/api/user/projects/preview")
     @Authenticated(true)
-    public Response<ProjectDto[]> action(@Caller User caller) {
+    public Response<ProjectPreviewDto[]> action(@Caller User caller) {
         try {
             List<Project> projects = projectService.findAllByUser(
                 caller.getId()
             );
-            List<ProjectDto> resultList = projects
+            List<ProjectPreviewDto> resultList = projects
                 .stream()
                 .map(project ->
-                    new ProjectDto()
+                    new ProjectPreviewDto()
                         .setId(project.getId().toString())
                         .setName(project.getName())
-                        .setOwnerId(project.getOwner().getId().toString())
-                        .setStartDate(project.getStartDate())
-                        .setEndDate(project.getEndDate())
                         .setImageId(
                             project.getImage() != null
                                 ? project.getImage().getId().toString()
@@ -44,9 +41,8 @@ public class Action {
                         )
                 )
                 .toList();
-
-            return new Response<ProjectDto[]>()
-                .setData(resultList.toArray(new ProjectDto[0]));
+            return new Response<ProjectPreviewDto[]>()
+                .setData(resultList.toArray(new ProjectPreviewDto[0]));
         } catch (Exception e) {
             log.error(
                 "Error [GET] /api/user/projects callerId:{}",
