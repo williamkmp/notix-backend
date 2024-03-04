@@ -2,10 +2,12 @@ package com.william.notix.services;
 
 import com.william.notix.dto.FileDto;
 import com.william.notix.entities.File;
+import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.exceptions.runtime.UserNotFoundException;
 import com.william.notix.repositories.FileRepository;
+import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileService {
 
     private String GET_FILE_URL = "http://localhost:5050/api/file/";
+    private final ProjectRepository projectRepository;
     private final FileRepository fileRepository;
     private final UserRepository userRepository;
 
@@ -122,6 +125,50 @@ public class FileService {
     }
 
     /**
+     * update existing project image
+     *
+     * @param projectId {@link Long} project id, not null
+     * @param newImageId {@link Long} file id, not null
+     * @return {@link Optional}<{@link FileDto}> image file information
+     */
+    @Transactional
+    public Optional<FileDto> updateProjectImage(
+        @NonNull Long projectId,
+        @NonNull Long newImageId
+    ) {
+        try {
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(ResourceNotFoundException::new);
+            File previousImage = project.getImage();
+            if (
+                previousImage != null &&
+                !previousImage.getId().equals(newImageId)
+            ) {
+                fileRepository.delete(previousImage);
+            }
+            File newImage = fileRepository
+                .findById(newImageId)
+                .orElseThrow(ResourceNotFoundException::new);
+            project.setImage(newImage);
+            projectRepository.save(project);
+            FileDto fileInfo = getFileInfo(newImageId)
+                .orElseThrow(Exception::new);
+            return Optional.of(fileInfo);
+        } catch (ResourceNotFoundException e) {
+            return Optional.empty();
+        } catch (Exception e) {
+            log.error(
+                "Error updating project image, projectId: {}, imageId: {}",
+                projectId,
+                newImageId
+            );
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    /**
      * delete existing user image
      * @param userId {@link Long} user id, not null
      */
@@ -138,6 +185,27 @@ public class FileService {
             userRepository.saveAndFlush(user);
         } catch (Exception e) {
             log.error("Error deleting user image, userId: {}", userId);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * delete existing project image
+     * @param projectId {@link Long} user id, not null
+     */
+    public void deleteImageOfProject(@NonNull Long projectId) {
+        try {
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(ResourceNotFoundException::new);
+            File previousImage = project.getImage();
+            if (previousImage != null) {
+                fileRepository.delete(previousImage);
+            }
+            project.setImage(null);
+            projectRepository.saveAndFlush(project);
+        } catch (Exception e) {
+            log.error("Error deleting project image, projectId: {}", projectId);
             e.printStackTrace();
         }
     }

@@ -1,6 +1,7 @@
 package com.william.notix.services;
 
 import com.william.notix.dto.InviteDto;
+import com.william.notix.dto.ProjectDto;
 import com.william.notix.dto.ProjectPreviewDto;
 import com.william.notix.entities.Authority;
 import com.william.notix.entities.Project;
@@ -14,6 +15,7 @@ import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,6 +28,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProjectService {
 
+    private final LogService logService;
+    private final FileService fileService;
+    private final DateTimeService dtmService;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final AuthorityRepository authorityRepository;
@@ -136,6 +141,106 @@ public class ProjectService {
         } catch (UserNotFoundException e) {
             return Optional.empty();
         } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * update a given project data.
+     *
+     * @param projectId {@link Long} target project id
+     * @param updaterId {@link Long} target project id
+     * @param newProjectData {@link ProjectDto} new data
+     * @return {@link Optional}<{@link Project}> updated project data, else empty if update failed
+     */
+    @Transactional
+    public Optional<Project> updateProject(
+        Long projectId,
+        Long updaterId,
+        ProjectDto newProjectData
+    ) {
+        try {
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(ResourceNotFoundException::new);
+            User newOwner = userRepository
+                .findById(Long.valueOf(newProjectData.getOwnerId()))
+                .orElseThrow(UserNotFoundException::new);
+
+            Long oldImageId = project.getImage() != null
+                ? project.getImage().getId()
+                : null;
+            Long newImageId = newProjectData.getImageId() != null 
+                ? Long.valueOf(newProjectData.getImageId())
+                : null;
+            String oldProjectName = project.getName();
+            LocalDate oldStartDate = dtmService.toLocalDate(
+                project.getStartDate()
+            );
+            LocalDate oldEndDate = dtmService.toLocalDate(project.getEndDate());
+            LocalDate newStarDate = dtmService.toLocalDate(
+                newProjectData.getStartDate()
+            );
+            LocalDate newEndDate = dtmService.toLocalDate(
+                newProjectData.getEndDate()
+            );
+
+            boolean isImageChange = !Objects.equals(oldImageId, newImageId);
+            boolean isTitleUpdated = !Objects.equals(
+                project.getName(),
+                newProjectData.getName()
+            );
+            boolean isOwnerChanged = !Objects.equals(
+                project.getOwner().getId().toString(),
+                newProjectData.getOwnerId()
+            );
+            boolean isDurationChanged =
+                (!Objects.equals(oldStartDate, newStarDate) ||
+                    !Objects.equals(oldEndDate, newEndDate));
+
+            if(isImageChange && newImageId == null) {
+                fileService.deleteImageOfProject(projectId);
+            }
+
+            if(isImageChange && newImageId != null) {
+                fileService.updateProjectImage(projectId, newImageId);
+            }
+
+            project.setName(newProjectData.getName());
+            project.setStartDate(newProjectData.getStartDate());
+            project.setEndDate(newProjectData.getEndDate());
+            project.setOwner(newOwner);
+            project = projectRepository.save(project);
+
+            if (isTitleUpdated) {
+                logService.logProjectChangeName(
+                    projectId,
+                    updaterId,
+                    oldProjectName,
+                    newProjectData.getName()
+                );
+            }
+
+            if (isDurationChanged) {
+                logService.logProjectUpdatePeriod(
+                    projectId,
+                    newOwner.getId(),
+                    newProjectData.getStartDate(),
+                    newProjectData.getEndDate()
+                );
+            }
+
+            if (isOwnerChanged) {
+                logService.logProjectOwnershipTransfer(
+                    projectId,
+                    newOwner.getId()
+                );
+            }
+            return Optional.of(project);
+        } catch (UserNotFoundException | ResourceNotFoundException e) {
+            return Optional.empty();
+        }  catch (Exception e) {
             e.printStackTrace();
             return Optional.empty();
         }

@@ -42,4 +42,24 @@ public class TOPIC {
     public static String userLogs(Long userId) {
         return "/topic/user/" + userId.toString() + "/logs";
     }
+
+    /**
+     * STOMP destination url for /topic/project/{projectId}/logs
+     *
+     * @param projectId {@link Long} project id
+     * @return {@link String} STOMP destination path
+     */
+    public static String projectLogs(Long projectId) {
+        return "/topic/project/" + projectId.toString() + "/logs";
+    }
+
+    /**
+     * STOMP destination url for /topic/project/{projectId}
+     *
+     * @param projectId {@link Long} project id
+     * @return {@link String} STOMP destination path
+     */
+    public static String project(Long projectId) {
+        return "/topic/project/" + projectId.toString();
+    }
 }

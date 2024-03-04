@@ -1,7 +1,9 @@
 package com.william.notix.services;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Date;
 import lombok.AllArgsConstructor;
@@ -38,5 +40,15 @@ public class DateTimeService {
     public OffsetDateTime toOffsetDtm(Date date) {
         Instant dateInstance = date.toInstant();
         return dateInstance.atOffset(ZoneOffset.UTC);
+    }
+
+    /**
+     * conver Date to LocalDate
+     *
+     * @param date {@link Date}
+     * @return
+     */
+    public LocalDate toLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }
