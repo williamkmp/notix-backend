@@ -17,6 +17,23 @@ public class TOPIC {
     }
 
     /**
+     * STOMP destination url for /topic/user/{userId}/project/{projectId}/errors
+     *
+     * @param userId {@link Long} user id
+     * @param projectId {@link Long} project id
+     * @return {@link String} STOMP destination path
+     */
+    public static String userProjectErrors(Long userId, Long projectId) {
+        return (
+            "/topic/user/" +
+            userId.toString() +
+            "/project/" +
+            projectId.toString() +
+            "/errors"
+        );
+    }
+
+    /**
      * STOMP destination url for /topic/user/{userId}/logs
      *
      * @param userId {@link Long} user id
