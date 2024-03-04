@@ -128,7 +128,7 @@ public class ProjectService {
             socket.convertAndSend(
                 TOPIC.userProjectPreviews(newMember.getId()),
                 new ProjectPreviewDto()
-                    .setAction(PREVIEW_ACTION.ADD)
+                    .setAction(PREVIEW_ACTION.ADD_CHILD)
                     .setId(project.getId().toString())
                     .setName(project.getName())
                     .setImageId(
@@ -216,6 +216,7 @@ public class ProjectService {
             socket.convertAndSend(
                 TOPIC.projectPreview(projectId),
                 new ProjectPreviewDto()
+                    .setAction(PREVIEW_ACTION.UPDATE)
                     .setImageId(newImageId != null ? newImageId.toString() : null)
                     .setId(projectId.toString())
                     .setName(project.getName())

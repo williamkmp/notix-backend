@@ -1,7 +1,7 @@
 package com.william.notix.utils.values;
 
 public enum PREVIEW_ACTION {
-    ADD,
+    ADD_CHILD,
     UPDATE,
-    DELETE,
+    DELETE_CHILD,
 }
