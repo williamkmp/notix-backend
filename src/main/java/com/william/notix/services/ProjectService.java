@@ -213,6 +213,14 @@ public class ProjectService {
             project.setOwner(newOwner);
             project = projectRepository.save(project);
 
+            socket.convertAndSend(
+                TOPIC.projectPreview(projectId),
+                new ProjectPreviewDto()
+                    .setImageId(newImageId != null ? newImageId.toString() : null)
+                    .setId(projectId.toString())
+                    .setName(project.getName())
+            );
+
             if (isTitleUpdated) {
                 logService.logProjectChangeName(
                     projectId,

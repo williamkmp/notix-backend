@@ -62,4 +62,14 @@ public class TOPIC {
     public static String project(Long projectId) {
         return "/topic/project/" + projectId.toString();
     }
+
+    /**
+     * STOMP destination url for /topic/project/{projectId}/preview
+     *
+     * @param projectId {@link Long} project id
+     * @return {@link String} STOMP destination path
+     */
+    public static String projectPreview(Long projectId) {
+        return "/topic/project/" + projectId.toString() + "/preview";
+    }
 }
