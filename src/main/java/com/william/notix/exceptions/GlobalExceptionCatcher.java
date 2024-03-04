@@ -6,7 +6,6 @@ import com.william.notix.exceptions.socket.StandardProjectSocketException;
 import com.william.notix.utils.values.KEY;
 import com.william.notix.utils.values.MESSAGES;
 import com.william.notix.utils.values.TOPIC;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,14 +78,12 @@ public class GlobalExceptionCatcher {
     }
 
     @MessageExceptionHandler(StandardProjectSocketException.class)
-    public void projectMessagingException(
-        StandardProjectSocketException e
-    ) {
+    public void projectMessagingException(StandardProjectSocketException e) {
         Long userId = e.getUserId();
         Long projectId = e.getProjectId();
         String sessionUuid = e.getSessionUuid();
         final String USER_ID = KEY.STOMP_CALLER_USER_ID;
-        final String SESSION_UUID= KEY.CALLER_SESSION_UUID;
+        final String SESSION_UUID = KEY.CALLER_SESSION_UUID;
 
         socket.convertAndSend(
             TOPIC.userProjectErrors(userId, projectId),

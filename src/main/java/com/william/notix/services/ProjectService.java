@@ -171,7 +171,7 @@ public class ProjectService {
             Long oldImageId = project.getImage() != null
                 ? project.getImage().getId()
                 : null;
-            Long newImageId = newProjectData.getImageId() != null 
+            Long newImageId = newProjectData.getImageId() != null
                 ? Long.valueOf(newProjectData.getImageId())
                 : null;
             String oldProjectName = project.getName();
@@ -199,11 +199,11 @@ public class ProjectService {
                 (!Objects.equals(oldStartDate, newStarDate) ||
                     !Objects.equals(oldEndDate, newEndDate));
 
-            if(isImageChange && newImageId == null) {
+            if (isImageChange && newImageId == null) {
                 fileService.deleteImageOfProject(projectId);
             }
 
-            if(isImageChange && newImageId != null) {
+            if (isImageChange && newImageId != null) {
                 fileService.updateProjectImage(projectId, newImageId);
             }
 
@@ -240,7 +240,7 @@ public class ProjectService {
             return Optional.of(project);
         } catch (UserNotFoundException | ResourceNotFoundException e) {
             return Optional.empty();
-        }  catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return Optional.empty();
         }

@@ -11,7 +11,6 @@ import com.william.notix.repositories.UserLogRespository;
 import com.william.notix.repositories.UserRepository;
 import com.william.notix.utils.values.TOPIC;
 import jakarta.transaction.Transactional;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import lombok.NonNull;
@@ -123,7 +122,7 @@ public class LogService {
 
     /**
      * add to project log for ownership transfer
-     * 
+     *
      * @param projectId {@link Long} updated project id
      * @param newOwnerId {@link Long} new owner's user id
      */
@@ -160,10 +159,10 @@ public class LogService {
     }
 
     /**
-     * add to project log for active period change  
-     * 
+     * add to project log for active period change
+     *
      * @param projectId {@link Long} updated project id
-     * @param updaterId {@link Long} user id who performs update 
+     * @param updaterId {@link Long} user id who performs update
      * @param newStartDate {@link Date} new start date
      * @param newEndDate {@link Date} new end date
      */
@@ -175,7 +174,9 @@ public class LogService {
         @NonNull Date newEndDate
     ) {
         try {
-            SimpleDateFormat dtmFormatter = new SimpleDateFormat("MMMM d, yyyy");
+            SimpleDateFormat dtmFormatter = new SimpleDateFormat(
+                "MMMM d, yyyy"
+            );
             User updater = userRepository
                 .findById(updaterId)
                 .orElseThrow(Exception::new);
@@ -185,7 +186,10 @@ public class LogService {
 
             ProjectLog log = new ProjectLog()
                 .setMessage(
-                    "\"{{ user.fullName }}\" changed project's active period to " + dtmFormatter.format(newStartDate) + " → " + dtmFormatter.format(newEndDate)
+                    "\"{{ user.fullName }}\" changed project's active period to " +
+                    dtmFormatter.format(newStartDate) +
+                    " → " +
+                    dtmFormatter.format(newEndDate)
                 )
                 .setRefrencedUser(updater)
                 .setUpdatee(project);

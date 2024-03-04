@@ -13,10 +13,8 @@ import com.william.notix.exceptions.socket.StandardProjectSocketException;
 import com.william.notix.services.AuthorityService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.TOPIC;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -43,7 +41,7 @@ public class Action {
             authorityService
                 .getUserProjectRole(caller.getId(), projectId)
                 .orElseThrow(ForbiddenException::new);
-            
+
             Project updatedProject = projectService
                 .updateProject(projectId, caller.getId(), newProjectData)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -51,7 +49,7 @@ public class Action {
             String imageId = updatedProject.getImage() != null
                 ? updatedProject.getImage().getId().toString()
                 : null;
-                
+
             socket.convertAndSend(
                 TOPIC.project(projectId),
                 new ProjectDto()
@@ -62,20 +60,22 @@ public class Action {
                     .setStartDate(updatedProject.getStartDate())
                     .setEndDate(updatedProject.getEndDate())
             );
-
-        } catch(ResourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             throw new NotFoundProjectException()
                 .setSessionUuid(sessionUuid)
                 .setProjectId(projectId)
                 .setUserId(caller.getId());
-        } catch(ForbiddenException e) {
+        } catch (ForbiddenException e) {
             throw new ForbiddenProjectException()
                 .setSessionUuid(sessionUuid)
                 .setProjectId(projectId)
                 .setUserId(caller.getId());
         } catch (Exception e) {
-            log.atError()
-                .setMessage("Error [STOMP] /project/{}, callerId:{}, payload:{}")
+            log
+                .atError()
+                .setMessage(
+                    "Error [STOMP] /project/{}, callerId:{}, payload:{}"
+                )
                 .addArgument(projectId.toString())
                 .addArgument(caller.getId())
                 .addArgument(newProjectData.toString());
