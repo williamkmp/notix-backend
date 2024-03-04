@@ -217,7 +217,9 @@ public class ProjectService {
                 TOPIC.projectPreview(projectId),
                 new ProjectPreviewDto()
                     .setAction(PREVIEW_ACTION.UPDATE)
-                    .setImageId(newImageId != null ? newImageId.toString() : null)
+                    .setImageId(
+                        newImageId != null ? newImageId.toString() : null
+                    )
                     .setId(projectId.toString())
                     .setName(project.getName())
             );
