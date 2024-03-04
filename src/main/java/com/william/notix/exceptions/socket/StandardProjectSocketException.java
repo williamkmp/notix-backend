@@ -11,25 +11,11 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class StandardProjectSocketException extends Exception {
     
-    private final Long userId;
-    private final String sessionUuid;
-    private final Long projectId;
+    private Long userId;
+    private String sessionUuid;
+    private Long projectId;
     private final String message;
     private final HttpStatusCode code;
-
-    public StandardProjectSocketException(
-        Long userId,
-        Long projectId,
-        String sessionUuid,
-        HttpStatusCode code,
-        String message
-    ) {
-        this.userId = userId;
-        this.projectId = projectId;
-        this.sessionUuid = sessionUuid;
-        this.code = code;
-        this.message = message;
-    }
 
     public StandardProjectSocketException(
         HttpStatusCode code,
@@ -41,5 +27,4 @@ public class StandardProjectSocketException extends Exception {
         this.code = code;
         this.message = message;
     }
-
 }
