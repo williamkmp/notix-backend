@@ -74,6 +74,15 @@ public class Action {
                 );
             }
 
+            socket.convertAndSend(
+                TOPIC.userProjectPreviews(caller.getId()),
+                new ProjectPreviewDto()
+                    .setAction(PREVIEW_ACTION.ADD_CHILD)
+                    .setId(createdProject.getId().toString())
+                    .setName(createdProject.getName())
+                    .setImageId(imageId)
+            );
+
             return new Response<ProjectDto>()
                 .setData(
                     new ProjectDto()
