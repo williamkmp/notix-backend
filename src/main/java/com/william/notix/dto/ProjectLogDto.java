@@ -1,4 +1,4 @@
-package com.william.notix.entities;
+package com.william.notix.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
