@@ -2,7 +2,6 @@ package com.william.notix.services;
 
 import com.william.notix.dto.InviteDto;
 import com.william.notix.dto.ProjectDto;
-import com.william.notix.dto.ProjectPreviewDto;
 import com.william.notix.entities.Authority;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
@@ -11,9 +10,7 @@ import com.william.notix.exceptions.runtime.UserNotFoundException;
 import com.william.notix.repositories.AuthorityRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserRepository;
-import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.ROLE;
-import com.william.notix.utils.values.TOPIC;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
@@ -21,7 +18,6 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,7 +30,6 @@ public class ProjectService {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final AuthorityRepository authorityRepository;
-    private final SimpMessagingTemplate socket;
 
     /**
      * insert a new project
@@ -125,18 +120,6 @@ public class ProjectService {
                     .setRole(memberRole)
             );
 
-            socket.convertAndSend(
-                TOPIC.userProjectPreviews(newMember.getId()),
-                new ProjectPreviewDto()
-                    .setAction(PREVIEW_ACTION.ADD_CHILD)
-                    .setId(project.getId().toString())
-                    .setName(project.getName())
-                    .setImageId(
-                        project.getImage() != null
-                            ? project.getImage().getId().toString()
-                            : null
-                    )
-            );
             return Optional.of(newMember);
         } catch (UserNotFoundException e) {
             return Optional.empty();
@@ -212,17 +195,6 @@ public class ProjectService {
             project.setEndDate(newProjectData.getEndDate());
             project.setOwner(newOwner);
             project = projectRepository.save(project);
-
-            socket.convertAndSend(
-                TOPIC.projectPreview(projectId),
-                new ProjectPreviewDto()
-                    .setAction(PREVIEW_ACTION.UPDATE)
-                    .setImageId(
-                        newImageId != null ? newImageId.toString() : null
-                    )
-                    .setId(projectId.toString())
-                    .setName(project.getName())
-            );
 
             if (isTitleUpdated) {
                 logService.logProjectChangeName(

@@ -28,6 +28,8 @@ public class SessionUuidStompResolver implements HandlerMethodArgumentResolver {
         SimpMessageHeaderAccessor header = SimpMessageHeaderAccessor.wrap(
             message
         );
-        return header.getFirstNativeHeader(KEY.CALLER_SESSION_UUID);
+        return header.getFirstNativeHeader(
+            KEY.STOMP_HEADER_CALLER_SESSION_UUID
+        );
     }
 }

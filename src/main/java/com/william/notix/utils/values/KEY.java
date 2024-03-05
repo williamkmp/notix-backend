@@ -20,10 +20,15 @@ public class KEY {
     /**
      * STOMP Header key for accessing caller's user id
      */
-    public static final String STOMP_CALLER_USER_ID = "CallerId";
+    public static final String STOMP_HEADER_CALLER_USER_ID = "CallerId";
 
     /**
-     * Header key for accessing caller's user id in STOMP Frame or HTTP
+     * STOMP frame header Header key for accessing caller's session uuid
      */
-    public static final String CALLER_SESSION_UUID = "SessionUUID";
+    public static final String STOMP_HEADER_CALLER_SESSION_UUID = "SessionUUID";
+
+    /**
+     * Header header key for accessing caller's user id
+     */
+    public static final String HTTP_HEADER_CALLER_SESSION_UUID = "SessionUUID";
 }

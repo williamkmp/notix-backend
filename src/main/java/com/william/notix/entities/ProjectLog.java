@@ -7,7 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.Date;
 import lombok.Data;
@@ -31,7 +31,7 @@ public class ProjectLog {
     @Column(name = "message", nullable = false)
     private String message;
 
-    @OneToOne
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
         name = "updatee_id",
@@ -40,7 +40,7 @@ public class ProjectLog {
     )
     private Project updatee;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "user_ref_id",
         referencedColumnName = "id",
@@ -48,7 +48,7 @@ public class ProjectLog {
     )
     private User refrencedUser;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
         name = "subproject_ref_id",

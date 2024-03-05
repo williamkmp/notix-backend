@@ -1,8 +1,8 @@
 package com.william.notix.services;
 
+import com.william.notix.dto.ProjectLogDto;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.ProjectLog;
-import com.william.notix.entities.ProjectLogDto;
 import com.william.notix.entities.User;
 import com.william.notix.entities.UserLog;
 import com.william.notix.entities.UserlogDto;

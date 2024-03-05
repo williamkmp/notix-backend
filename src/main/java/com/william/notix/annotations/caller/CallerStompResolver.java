@@ -33,7 +33,7 @@ public class CallerStompResolver implements HandlerMethodArgumentResolver {
             message
         );
         Long senderId = Long.valueOf(
-            header.getFirstNativeHeader(KEY.STOMP_CALLER_USER_ID)
+            header.getFirstNativeHeader(KEY.STOMP_HEADER_CALLER_USER_ID)
         );
         return userRepository.findById(senderId).orElse(null);
     }

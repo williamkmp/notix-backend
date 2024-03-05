@@ -28,6 +28,6 @@ public class SessionUuidHttpResolver implements HandlerMethodArgumentResolver {
         NativeWebRequest webRequest,
         WebDataBinderFactory binderFactory
     ) throws Exception {
-        return webRequest.getHeader(KEY.CALLER_SESSION_UUID);
+        return webRequest.getHeader(KEY.HTTP_HEADER_CALLER_SESSION_UUID);
     }
 }

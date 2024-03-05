@@ -4,17 +4,21 @@ import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.dto.InviteDto;
 import com.william.notix.dto.ProjectDto;
+import com.william.notix.dto.ProjectPreviewDto;
 import com.william.notix.dto.response.Response;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.http.InternalServerErrorHttpException;
 import com.william.notix.services.ProjectService;
+import com.william.notix.utils.values.PREVIEW_ACTION;
+import com.william.notix.utils.values.TOPIC;
 import jakarta.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class Action {
 
     private final ProjectService projectService;
+    private final SimpMessagingTemplate socket;
 
     @PostMapping("/api/project")
     @Authenticated(true)
@@ -43,11 +48,30 @@ public class Action {
                 )
                 .orElseThrow(Exception::new);
 
+            String imageId = createdProject.getImage() != null
+                ? createdProject.getImage().getId().toString()
+                : null;
+
             List<InviteDto> invites = Optional
                 .ofNullable(request.getInvites())
                 .orElse(Collections.emptyList());
             for (InviteDto invite : invites) {
-                projectService.addMember(createdProject.getId(), invite);
+                Optional<User> invitedUser = projectService.addMember(
+                    createdProject.getId(),
+                    invite
+                );
+                if (invitedUser.isEmpty()) {
+                    continue;
+                }
+                User newMember = invitedUser.get();
+                socket.convertAndSend(
+                    TOPIC.userProjectPreviews(newMember.getId()),
+                    new ProjectPreviewDto()
+                        .setAction(PREVIEW_ACTION.ADD_CHILD)
+                        .setId(createdProject.getId().toString())
+                        .setName(createdProject.getName())
+                        .setImageId(imageId)
+                );
             }
 
             return new Response<ProjectDto>()
@@ -57,13 +81,9 @@ public class Action {
                         .setName(createdProject.getName())
                         .setStartDate(createdProject.getStartDate())
                         .setEndDate(createdProject.getEndDate())
+                        .setImageId(imageId)
                         .setOwnerId(
                             createdProject.getOwner().getId().toString()
-                        )
-                        .setImageId(
-                            createdProject.getImage() != null
-                                ? createdProject.getImage().getId().toString()
-                                : null
                         )
                 );
         } catch (Exception e) {

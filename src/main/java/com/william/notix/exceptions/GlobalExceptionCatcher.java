@@ -82,8 +82,8 @@ public class GlobalExceptionCatcher {
         Long userId = e.getUserId();
         Long projectId = e.getProjectId();
         String sessionUuid = e.getSessionUuid();
-        final String USER_ID = KEY.STOMP_CALLER_USER_ID;
-        final String SESSION_UUID = KEY.CALLER_SESSION_UUID;
+        final String USER_ID = KEY.STOMP_HEADER_CALLER_USER_ID;
+        final String SESSION_UUID = KEY.STOMP_HEADER_CALLER_SESSION_UUID;
 
         socket.convertAndSend(
             TOPIC.userProjectErrors(userId, projectId),
