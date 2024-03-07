@@ -3,7 +3,7 @@ package com.william.notix.exceptions.runtime;
 public class ForbiddenException extends RuntimeException {
 
     public ForbiddenException() {
-        super("Unauthorized resource access");
+        super("Forbidden resource access");
     }
 
     public ForbiddenException(String message) {
