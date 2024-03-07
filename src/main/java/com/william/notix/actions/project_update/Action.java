@@ -26,7 +26,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Slf4j
-@Controller
+@Controller("projectUpdateAction")
 @RequiredArgsConstructor
 public class Action {
 
@@ -34,7 +34,7 @@ public class Action {
     private final AuthorityService authorityService;
     private final SimpMessagingTemplate socket;
 
-    @MessageMapping("/project/{projectId}")
+    @MessageMapping("/project/{projectId}.update")
     public void updateProjectName(
         @DestinationVariable("projectId") Long projectId,
         @Payload ProjectDto newProjectData,
