@@ -23,7 +23,7 @@ public class Action {
     private final UserService userService;
 
     @GetMapping("/api/user/{userId}")
-    @Authenticated
+    @Authenticated(true)
     public Response<UserDto> action(
         @Caller User caller,
         @PathVariable("userId") Long userId

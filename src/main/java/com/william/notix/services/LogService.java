@@ -130,7 +130,7 @@ public class LogService {
                 new UserLog()
                     .setTitle("New Project")
                     .setMessage(
-                        "<p><strong>{{ user.fullName }}</strong> added you to their project, <em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">{{ project.name }}</mark></em></strong><em>\"</em></p>"
+                        "<p><strong>{{user.fullName}}</strong> added you to their project, <em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">{{project.name}}</mark></em></strong><em>\"</em></p>"
                     )
                     .setRefrencedProject(project)
                     .setRefrencedUser(inviter)
@@ -171,7 +171,7 @@ public class LogService {
                 new ProjectLog()
                     .setTitle("Created")
                     .setMessage(
-                        "<p><strong>{{ user.fullName }}</strong> created project.</p>"
+                        "<p><strong>{{user.fullName}}</strong> created project.</p>"
                     )
                     .setRefrencedUser(updater)
                     .setUpdatee(project)
@@ -213,7 +213,7 @@ public class LogService {
                 new ProjectLog()
                     .setTitle("Update Name")
                     .setMessage(
-                        "<p><strong>{{ user.fullName }}</strong> changed project's name. <br><em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
+                        "<p><strong>{{user.fullName}}</strong> changed project's name. <br><em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
                         oldTitle +
                         "</mark></em></strong><em>\" </em><strong>→ </strong><em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
                         newTitle +
@@ -255,7 +255,7 @@ public class LogService {
                 new ProjectLog()
                     .setTitle("Transfered Ownership")
                     .setMessage(
-                        "<p>Project ownership transfered to <br>\"<strong><em>{{ user.fullName }}</em></strong>\"<br><em>{{ user.email }}</em></p>"
+                        "<p>Project ownership transfered to <br>\"<strong><em>{{user.fullName}}</em></strong>\"<br><em>{{user.email}}</em></p>"
                     )
                     .setRefrencedUser(newOwner)
                     .setUpdatee(project)
@@ -300,7 +300,7 @@ public class LogService {
                 new ProjectLog()
                     .setTitle("Update Period")
                     .setMessage(
-                        "<p><strong>{{ user.fullName }} </strong>updated project's active period to</p><p><em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
+                        "<p><strong>{{user.fullName}} </strong>updated project's active period to</p><p><em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
                         dtmFormatter.format(newStartDate) +
                         " → " +
                         dtmFormatter.format(newEndDate) +
