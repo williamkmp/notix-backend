@@ -1,7 +1,6 @@
 package com.william.notix.dto;
 
 import java.util.Date;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;

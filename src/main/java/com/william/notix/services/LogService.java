@@ -14,11 +14,9 @@ import jakarta.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
-
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -35,32 +33,32 @@ public class LogService {
 
     /**
      * Serialize a given User updateRecord record
-     * 
+     *
      * @param updateRecord {@link UserLog} updateRecord
      * @return {@link Optional}<{@link LogDto}> updateRecord dto
      */
     @Transactional
     public Optional<LogDto> serializeUserLog(@NonNull UserLog updateRecord) {
         try {
-            String projectId = updateRecord.getRefrencedProject() !=  null 
+            String projectId = updateRecord.getRefrencedProject() != null
                 ? updateRecord.getRefrencedProject().getId().toString()
                 : null;
-            String userId = updateRecord.getRefrencedUser() !=  null 
+            String userId = updateRecord.getRefrencedUser() != null
                 ? updateRecord.getRefrencedUser().getId().toString()
-                : null; 
-            String subprojectId = updateRecord.getRefrencedSubproject() !=  null 
+                : null;
+            String subprojectId = updateRecord.getRefrencedSubproject() != null
                 ? updateRecord.getRefrencedSubproject().getId().toString()
-                : null; 
+                : null;
             return Optional.of(
-                    new LogDto()
-                        .setId(updateRecord.getId().toString())
-                        .setTitle(updateRecord.getTitle())
-                        .setProjectId(projectId)
-                        .setUserId(userId)
-                        .setSubprojectId(subprojectId)
-                        .setMessage(updateRecord.getMessage())
-                        .setCreatedAt(updateRecord.getCreatedAt())
-                );
+                new LogDto()
+                    .setId(updateRecord.getId().toString())
+                    .setTitle(updateRecord.getTitle())
+                    .setProjectId(projectId)
+                    .setUserId(userId)
+                    .setSubprojectId(subprojectId)
+                    .setMessage(updateRecord.getMessage())
+                    .setCreatedAt(updateRecord.getCreatedAt())
+            );
         } catch (Exception e) {
             log.error("Error serializing UserLog id:{}", updateRecord.getId());
             e.printStackTrace();
@@ -70,30 +68,35 @@ public class LogService {
 
     /**
      * Serialize a given User updateRecord record
-     * 
+     *
      * @param updateRecord {@link ProjectLog} updateRecord
      * @return {@link Optional}<{@link LogDto}> updateRecord dto
      */
     @Transactional
-    public Optional<LogDto> serializeProjectLog(@NonNull ProjectLog updateRecord) {
+    public Optional<LogDto> serializeProjectLog(
+        @NonNull ProjectLog updateRecord
+    ) {
         try {
-            String userId = updateRecord.getRefrencedUser() !=  null 
+            String userId = updateRecord.getRefrencedUser() != null
                 ? updateRecord.getRefrencedUser().getId().toString()
-                : null; 
-            String subprojectId = updateRecord.getRefrencedSubproject() !=  null 
+                : null;
+            String subprojectId = updateRecord.getRefrencedSubproject() != null
                 ? updateRecord.getRefrencedSubproject().getId().toString()
-                : null; 
+                : null;
             return Optional.of(
-                    new LogDto()
-                        .setId(updateRecord.getId().toString())
-                        .setTitle(updateRecord.getTitle())
-                        .setUserId(userId)
-                        .setSubprojectId(subprojectId)
-                        .setMessage(updateRecord.getMessage())
-                        .setCreatedAt(updateRecord.getCreatedAt())
-                );
+                new LogDto()
+                    .setId(updateRecord.getId().toString())
+                    .setTitle(updateRecord.getTitle())
+                    .setUserId(userId)
+                    .setSubprojectId(subprojectId)
+                    .setMessage(updateRecord.getMessage())
+                    .setCreatedAt(updateRecord.getCreatedAt())
+            );
         } catch (Exception e) {
-            log.error("Error serializing ProjectLog id:{}", updateRecord.getId());
+            log.error(
+                "Error serializing ProjectLog id:{}",
+                updateRecord.getId()
+            );
             e.printStackTrace();
             return Optional.empty();
         }
@@ -134,12 +137,10 @@ public class LogService {
                     .setUpdatee(invitee)
             );
 
-            LogDto dto = serializeUserLog(updateRecord).orElseThrow(Exception::new);
+            LogDto dto = serializeUserLog(updateRecord)
+                .orElseThrow(Exception::new);
 
-            socket.convertAndSend(
-                TOPIC.userLogs(inviterId),
-                dto
-            );
+            socket.convertAndSend(TOPIC.userLogs(inviterId), dto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -176,12 +177,10 @@ public class LogService {
                     .setUpdatee(project)
             );
 
-            LogDto dto = serializeProjectLog(updateRecord).orElseThrow(Exception::new);
+            LogDto dto = serializeProjectLog(updateRecord)
+                .orElseThrow(Exception::new);
 
-            socket.convertAndSend(
-                TOPIC.projectLogs(projectId),
-                dto
-            );
+            socket.convertAndSend(TOPIC.projectLogs(projectId), dto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -214,19 +213,20 @@ public class LogService {
                 new ProjectLog()
                     .setTitle("Update Name")
                     .setMessage(
-                        "<p><strong>{{ user.fullName }}</strong> changed project's name. <br><em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">"+oldTitle+"</mark></em></strong><em>\" </em><strong>→ </strong><em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">"+newTitle+"</mark></em></strong><em>\".</em></p>"
+                        "<p><strong>{{ user.fullName }}</strong> changed project's name. <br><em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
+                        oldTitle +
+                        "</mark></em></strong><em>\" </em><strong>→ </strong><em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
+                        newTitle +
+                        "</mark></em></strong><em>\".</em></p>"
                     )
                     .setRefrencedUser(updater)
                     .setUpdatee(project)
             );
 
-            LogDto dto = serializeProjectLog(updateRecord).orElseThrow(Exception::new);
+            LogDto dto = serializeProjectLog(updateRecord)
+                .orElseThrow(Exception::new);
 
-
-            socket.convertAndSend(
-                TOPIC.projectLogs(projectId),
-                dto
-            );
+            socket.convertAndSend(TOPIC.projectLogs(projectId), dto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -261,12 +261,10 @@ public class LogService {
                     .setUpdatee(project)
             );
 
-            LogDto dto = serializeProjectLog(updateRecord).orElseThrow(Exception::new);
+            LogDto dto = serializeProjectLog(updateRecord)
+                .orElseThrow(Exception::new);
 
-            socket.convertAndSend(
-                TOPIC.projectLogs(projectId),
-                dto
-            );
+            socket.convertAndSend(TOPIC.projectLogs(projectId), dto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -302,18 +300,20 @@ public class LogService {
                 new ProjectLog()
                     .setTitle("Update Period")
                     .setMessage(
-                        "<p><strong>{{ user.fullName }} </strong>updated project's active period to</p><p><em><mark class=\"bg-sky-100 rounded-none px-0.5\">"+dtmFormatter.format(newStartDate)+" → "+dtmFormatter.format(newEndDate)+"</mark></em></p>"
+                        "<p><strong>{{ user.fullName }} </strong>updated project's active period to</p><p><em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
+                        dtmFormatter.format(newStartDate) +
+                        " → " +
+                        dtmFormatter.format(newEndDate) +
+                        "</mark></em></p>"
                     )
                     .setRefrencedUser(updater)
                     .setUpdatee(project)
             );
 
-            LogDto dto = serializeProjectLog(updateRecord).orElseThrow(Exception::new);
+            LogDto dto = serializeProjectLog(updateRecord)
+                .orElseThrow(Exception::new);
 
-            socket.convertAndSend(
-                TOPIC.projectLogs(projectId),
-                dto
-            );
+            socket.convertAndSend(TOPIC.projectLogs(projectId), dto);
         } catch (Exception e) {
             e.printStackTrace();
         }
