@@ -4,10 +4,12 @@ import com.william.notix.dto.InviteDto;
 import com.william.notix.dto.ProjectDto;
 import com.william.notix.entities.Authority;
 import com.william.notix.entities.Project;
+import com.william.notix.entities.ProjectLog;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.exceptions.runtime.UserNotFoundException;
 import com.william.notix.repositories.AuthorityRepository;
+import com.william.notix.repositories.ProjectLogRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserRepository;
 import com.william.notix.utils.values.ROLE;
@@ -18,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +32,7 @@ public class ProjectService {
     private final DateTimeService dtmService;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
+    private final ProjectLogRepository projectLogRepository;
     private final AuthorityRepository authorityRepository;
 
     /**
@@ -224,6 +228,20 @@ public class ProjectService {
             return Optional.of(project);
         } catch (UserNotFoundException | ResourceNotFoundException e) {
             return Optional.empty();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    public Optional<List<ProjectLog>> findLogsById(
+        @NonNull Long projectId,
+        @NonNull Pageable page
+    ) {
+        try {
+            List<ProjectLog> updateRecords =
+                projectLogRepository.findAllByProject(projectId, page);
+            return Optional.of(updateRecords);
         } catch (Exception e) {
             e.printStackTrace();
             return Optional.empty();
