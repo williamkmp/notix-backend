@@ -1,11 +1,10 @@
 package com.william.notix.services;
 
-import com.william.notix.dto.ProjectLogDto;
+import com.william.notix.dto.LogDto;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.ProjectLog;
 import com.william.notix.entities.User;
 import com.william.notix.entities.UserLog;
-import com.william.notix.entities.UserlogDto;
 import com.william.notix.repositories.ProjectLogRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserLogRespository;
@@ -14,11 +13,16 @@ import com.william.notix.utils.values.TOPIC;
 import jakarta.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LogService {
@@ -28,6 +32,72 @@ public class LogService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final SimpMessagingTemplate socket;
+
+    /**
+     * Serialize a given User updateRecord record
+     * 
+     * @param updateRecord {@link UserLog} updateRecord
+     * @return {@link Optional}<{@link LogDto}> updateRecord dto
+     */
+    @Transactional
+    public Optional<LogDto> serializeUserLog(@NonNull UserLog updateRecord) {
+        try {
+            String projectId = updateRecord.getRefrencedProject() !=  null 
+                ? updateRecord.getRefrencedProject().getId().toString()
+                : null;
+            String userId = updateRecord.getRefrencedUser() !=  null 
+                ? updateRecord.getRefrencedUser().getId().toString()
+                : null; 
+            String subprojectId = updateRecord.getRefrencedSubproject() !=  null 
+                ? updateRecord.getRefrencedSubproject().getId().toString()
+                : null; 
+            return Optional.of(
+                    new LogDto()
+                        .setId(updateRecord.getId().toString())
+                        .setTitle(updateRecord.getTitle())
+                        .setProjectId(projectId)
+                        .setUserId(userId)
+                        .setSubprojectId(subprojectId)
+                        .setMessage(updateRecord.getMessage())
+                        .setCreatedAt(updateRecord.getCreatedAt())
+                );
+        } catch (Exception e) {
+            log.error("Error serializing UserLog id:{}", updateRecord.getId());
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Serialize a given User updateRecord record
+     * 
+     * @param updateRecord {@link ProjectLog} updateRecord
+     * @return {@link Optional}<{@link LogDto}> updateRecord dto
+     */
+    @Transactional
+    public Optional<LogDto> serializeProjectLog(@NonNull ProjectLog updateRecord) {
+        try {
+            String userId = updateRecord.getRefrencedUser() !=  null 
+                ? updateRecord.getRefrencedUser().getId().toString()
+                : null; 
+            String subprojectId = updateRecord.getRefrencedSubproject() !=  null 
+                ? updateRecord.getRefrencedSubproject().getId().toString()
+                : null; 
+            return Optional.of(
+                    new LogDto()
+                        .setId(updateRecord.getId().toString())
+                        .setTitle(updateRecord.getTitle())
+                        .setUserId(userId)
+                        .setSubprojectId(subprojectId)
+                        .setMessage(updateRecord.getMessage())
+                        .setCreatedAt(updateRecord.getCreatedAt())
+                );
+        } catch (Exception e) {
+            log.error("Error serializing ProjectLog id:{}", updateRecord.getId());
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
 
     /**
      * logged user is invited to a project by another user
@@ -53,7 +123,7 @@ public class LogService {
                 .findById(projectId)
                 .orElseThrow(Exception::new);
 
-            UserLog log = userLogRespository.saveAndFlush(
+            UserLog updateRecord = userLogRespository.saveAndFlush(
                 new UserLog()
                     .setTitle("New Project")
                     .setMessage(
@@ -64,13 +134,11 @@ public class LogService {
                     .setUpdatee(invitee)
             );
 
+            LogDto dto = serializeUserLog(updateRecord).orElseThrow(Exception::new);
+
             socket.convertAndSend(
                 TOPIC.userLogs(inviterId),
-                new UserlogDto()
-                    .setId(log.getId().toString())
-                    .setMessage(log.getMessage())
-                    .setUserId(log.getRefrencedUser().getId().toString())
-                    .setProjectId(log.getRefrencedProject().getId().toString())
+                dto
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,7 +146,7 @@ public class LogService {
     }
 
     /**
-     * add to project's log that name is changed
+     * add to project's updateRecord that name is changed
      *
      * @param projectId {@link Long} updated project id
      * @param updaterId {@link Long} user who performs th update
@@ -98,7 +166,7 @@ public class LogService {
                 .findById(projectId)
                 .orElseThrow(Exception::new);
 
-            ProjectLog log = projectLogRepository.saveAndFlush(
+            ProjectLog updateRecord = projectLogRepository.saveAndFlush(
                 new ProjectLog()
                     .setTitle("Created")
                     .setMessage(
@@ -108,12 +176,11 @@ public class LogService {
                     .setUpdatee(project)
             );
 
+            LogDto dto = serializeProjectLog(updateRecord).orElseThrow(Exception::new);
+
             socket.convertAndSend(
                 TOPIC.projectLogs(projectId),
-                new ProjectLogDto()
-                    .setId(log.getId().toString())
-                    .setMessage(log.getMessage())
-                    .setUserId(log.getRefrencedUser().getId().toString())
+                dto
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,7 +188,7 @@ public class LogService {
     }
 
     /**
-     * add to project's log that name is changed
+     * add to project's updateRecord that name is changed
      *
      * @param projectId {@link Long} updated project id
      * @param updaterId {@link Long} user who performs th update
@@ -143,7 +210,7 @@ public class LogService {
                 .findById(projectId)
                 .orElseThrow(Exception::new);
 
-            ProjectLog log = projectLogRepository.saveAndFlush(
+            ProjectLog updateRecord = projectLogRepository.saveAndFlush(
                 new ProjectLog()
                     .setTitle("Update Name")
                     .setMessage(
@@ -153,12 +220,12 @@ public class LogService {
                     .setUpdatee(project)
             );
 
+            LogDto dto = serializeProjectLog(updateRecord).orElseThrow(Exception::new);
+
+
             socket.convertAndSend(
                 TOPIC.projectLogs(projectId),
-                new ProjectLogDto()
-                    .setId(log.getId().toString())
-                    .setMessage(log.getMessage())
-                    .setUserId(log.getRefrencedUser().getId().toString())
+                dto
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,7 +233,7 @@ public class LogService {
     }
 
     /**
-     * add to project log for ownership transfer
+     * add to project updateRecord for ownership transfer
      *
      * @param projectId {@link Long} updated project id
      * @param newOwnerId {@link Long} new owner's user id
@@ -184,7 +251,7 @@ public class LogService {
                 .findById(projectId)
                 .orElseThrow(Exception::new);
 
-            ProjectLog log = projectLogRepository.saveAndFlush(
+            ProjectLog updateRecord = projectLogRepository.saveAndFlush(
                 new ProjectLog()
                     .setTitle("Transfered Ownership")
                     .setMessage(
@@ -194,12 +261,11 @@ public class LogService {
                     .setUpdatee(project)
             );
 
+            LogDto dto = serializeProjectLog(updateRecord).orElseThrow(Exception::new);
+
             socket.convertAndSend(
                 TOPIC.projectLogs(projectId),
-                new ProjectLogDto()
-                    .setId(log.getId().toString())
-                    .setMessage(log.getMessage())
-                    .setUserId(log.getRefrencedUser().getId().toString())
+                dto
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -207,7 +273,7 @@ public class LogService {
     }
 
     /**
-     * add to project log for active period change
+     * add to project updateRecord for active period change
      *
      * @param projectId {@link Long} updated project id
      * @param updaterId {@link Long} user id who performs update
@@ -232,7 +298,7 @@ public class LogService {
                 .findById(projectId)
                 .orElseThrow(Exception::new);
 
-            ProjectLog log = projectLogRepository.saveAndFlush(
+            ProjectLog updateRecord = projectLogRepository.saveAndFlush(
                 new ProjectLog()
                     .setTitle("Update Period")
                     .setMessage(
@@ -242,12 +308,11 @@ public class LogService {
                     .setUpdatee(project)
             );
 
+            LogDto dto = serializeProjectLog(updateRecord).orElseThrow(Exception::new);
+
             socket.convertAndSend(
                 TOPIC.projectLogs(projectId),
-                new ProjectLogDto()
-                    .setId(log.getId().toString())
-                    .setMessage(log.getMessage())
-                    .setUserId(log.getRefrencedUser().getId().toString())
+                dto
             );
         } catch (Exception e) {
             e.printStackTrace();
