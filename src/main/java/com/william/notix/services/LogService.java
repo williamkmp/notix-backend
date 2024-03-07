@@ -55,8 +55,9 @@ public class LogService {
 
             UserLog log = userLogRespository.saveAndFlush(
                 new UserLog()
+                    .setTitle("New Project")
                     .setMessage(
-                        "{{ user.fullName }} added you to project, \"{{ project.name }}\""
+                        "<p><strong>{{ user.fullName }}</strong> added you to their project, <em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">{{ project.name }}</mark></em></strong><em>\"</em></p>"
                     )
                     .setRefrencedProject(project)
                     .setRefrencedUser(inviter)
@@ -72,7 +73,50 @@ public class LogService {
                     .setProjectId(log.getRefrencedProject().getId().toString())
             );
         } catch (Exception e) {
-            // Ignore error
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * add to project's log that name is changed
+     *
+     * @param projectId {@link Long} updated project id
+     * @param updaterId {@link Long} user who performs th update
+     * @param oldTitle {@link String} prev title
+     * @param newTitle {@link String} new title
+     */
+    @Transactional
+    public void logProjectCreated(
+        @NonNull Long projectId,
+        @NonNull Long creatorId
+    ) {
+        try {
+            User updater = userRepository
+                .findById(creatorId)
+                .orElseThrow(Exception::new);
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(Exception::new);
+
+            ProjectLog log = projectLogRepository.saveAndFlush(
+                new ProjectLog()
+                    .setTitle("Created")
+                    .setMessage(
+                        "<p><strong>{{ user.fullName }}</strong> created project.</p>"
+                    )
+                    .setRefrencedUser(updater)
+                    .setUpdatee(project)
+            );
+
+            socket.convertAndSend(
+                TOPIC.projectLogs(projectId),
+                new ProjectLogDto()
+                    .setId(log.getId().toString())
+                    .setMessage(log.getMessage())
+                    .setUserId(log.getRefrencedUser().getId().toString())
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -101,12 +145,9 @@ public class LogService {
 
             ProjectLog log = projectLogRepository.saveAndFlush(
                 new ProjectLog()
+                    .setTitle("Update Name")
                     .setMessage(
-                        "{{ user.fullName }} changed project name from \"" +
-                        oldTitle +
-                        "\" to \"" +
-                        newTitle +
-                        "\""
+                        "<p><strong>{{ user.fullName }}</strong> changed project's name. <br><em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">"+oldTitle+"</mark></em></strong><em>\" </em><strong>→ </strong><em>\"</em><strong><em><mark class=\"bg-sky-100 rounded-none px-0.5\">"+newTitle+"</mark></em></strong><em>\".</em></p>"
                     )
                     .setRefrencedUser(updater)
                     .setUpdatee(project)
@@ -120,7 +161,7 @@ public class LogService {
                     .setUserId(log.getRefrencedUser().getId().toString())
             );
         } catch (Exception e) {
-            // Ignore error
+            e.printStackTrace();
         }
     }
 
@@ -145,8 +186,9 @@ public class LogService {
 
             ProjectLog log = projectLogRepository.saveAndFlush(
                 new ProjectLog()
+                    .setTitle("Transfered Ownership")
                     .setMessage(
-                        "Project ownership transfered to \"{{ user.fullName }}\""
+                        "<p>Project ownership transfered to <br>\"<strong><em>{{ user.fullName }}</em></strong>\"<br><em>{{ user.email }}</em></p>"
                     )
                     .setRefrencedUser(newOwner)
                     .setUpdatee(project)
@@ -160,7 +202,7 @@ public class LogService {
                     .setUserId(log.getRefrencedUser().getId().toString())
             );
         } catch (Exception e) {
-            // Ignore error
+            e.printStackTrace();
         }
     }
 
@@ -192,11 +234,9 @@ public class LogService {
 
             ProjectLog log = projectLogRepository.saveAndFlush(
                 new ProjectLog()
+                    .setTitle("Update Period")
                     .setMessage(
-                        "\"{{ user.fullName }}\" changed project's active period to " +
-                        dtmFormatter.format(newStartDate) +
-                        " → " +
-                        dtmFormatter.format(newEndDate)
+                        "<p><strong>{{ user.fullName }} </strong>updated project's active period to</p><p><em><mark class=\"bg-sky-100 rounded-none px-0.5\">"+dtmFormatter.format(newStartDate)+" → "+dtmFormatter.format(newEndDate)+"</mark></em></p>"
                     )
                     .setRefrencedUser(updater)
                     .setUpdatee(project)
@@ -210,7 +250,7 @@ public class LogService {
                     .setUserId(log.getRefrencedUser().getId().toString())
             );
         } catch (Exception e) {
-            // Ignore error
+            e.printStackTrace();
         }
     }
 }

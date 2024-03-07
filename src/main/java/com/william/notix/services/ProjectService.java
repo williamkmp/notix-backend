@@ -50,6 +50,7 @@ public class ProjectService {
                 .orElseThrow(UserNotFoundException::new);
             newProject.setOwner(owner);
             Project savedProject = projectRepository.save(newProject);
+            logService.logProjectCreated(savedProject.getId(), owner.getId());
             return Optional.of(savedProject);
         } catch (UserNotFoundException e) {
             throw new UserNotFoundException();

@@ -29,7 +29,10 @@ public class UserLog {
     private Long id;
 
     @Column(name = "message", nullable = false)
-    private String message;
+    private String message = "<p></p>";
+
+    @Column(name = "title", nullable = false)
+    private String title = "Update";
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
