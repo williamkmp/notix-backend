@@ -21,7 +21,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Accessors(chain = true)
 @NoArgsConstructor
 @Entity(name = "project_logs")
-@Table(name = "projects_logs")
+@Table(name = "project_logs")
 public class ProjectLog {
 
     @Id
