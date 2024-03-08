@@ -14,7 +14,7 @@ import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserRepository;
 import com.william.notix.utils.values.ROLE;
 import jakarta.transaction.Transactional;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -163,16 +163,10 @@ public class ProjectService {
                 ? Long.valueOf(newProjectData.getImageId())
                 : null;
             String oldProjectName = project.getName();
-            LocalDate oldStartDate = dtmService.toLocalDate(
-                project.getStartDate()
-            );
-            LocalDate oldEndDate = dtmService.toLocalDate(project.getEndDate());
-            LocalDate newStarDate = dtmService.toLocalDate(
-                newProjectData.getStartDate()
-            );
-            LocalDate newEndDate = dtmService.toLocalDate(
-                newProjectData.getEndDate()
-            );
+            Date oldStartDate = project.getStartDate();
+            Date oldEndDate = project.getEndDate();
+            Date newStarDate = newProjectData.getStartDate();
+            Date newEndDate = newProjectData.getEndDate();
 
             boolean isImageChange = !Objects.equals(oldImageId, newImageId);
             boolean isTitleUpdated = !Objects.equals(
@@ -184,8 +178,8 @@ public class ProjectService {
                 newProjectData.getOwnerId()
             );
             boolean isDurationChanged =
-                (!Objects.equals(oldStartDate, newStarDate) ||
-                    !Objects.equals(oldEndDate, newEndDate));
+                !dtmService.isSameDate(newStarDate, oldStartDate) ||
+                !dtmService.isSameDate(newEndDate, oldEndDate);
 
             if (isImageChange && newImageId == null) {
                 fileService.deleteImageOfProject(projectId);
@@ -196,9 +190,9 @@ public class ProjectService {
             }
 
             project.setName(newProjectData.getName());
+            project.setOwner(newOwner);
             project.setStartDate(newProjectData.getStartDate());
             project.setEndDate(newProjectData.getEndDate());
-            project.setOwner(newOwner);
             project = projectRepository.save(project);
 
             if (isTitleUpdated) {

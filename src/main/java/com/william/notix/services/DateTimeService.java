@@ -1,10 +1,6 @@
 package com.william.notix.services;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.util.Calendar;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,33 +18,27 @@ public class DateTimeService {
     }
 
     /**
-     * convert OffsetDateTime to server local Date
+     * determine if two date is the same, ignoring the time
      *
-     * @param dateTime {@link OffsetDateTime} offsetdatetime
-     * @return {@link Date} server local date time
+     * @param date1 {@link Date} date 1
+     * @param date2 {@link Date} date 2
+     * @return {@type boolean}
      */
-    public Date toDate(OffsetDateTime offsetDtm) {
-        return Date.from(offsetDtm.toInstant());
-    }
+    public boolean isSameDate(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+        cal1.set(Calendar.HOUR_OF_DAY, 0);
+        cal1.set(Calendar.MINUTE, 0);
+        cal1.set(Calendar.SECOND, 0);
+        cal1.set(Calendar.MILLISECOND, 0);
 
-    /**
-     * convert Date to OffsetDateTime
-     *
-     * @param date {@link Date} datetime
-     * @return {@link OffsetDateTime} datetime with offset
-     */
-    public OffsetDateTime toOffsetDtm(Date date) {
-        Instant dateInstance = date.toInstant();
-        return dateInstance.atOffset(ZoneOffset.UTC);
-    }
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+        cal2.set(Calendar.HOUR_OF_DAY, 0);
+        cal2.set(Calendar.MINUTE, 0);
+        cal2.set(Calendar.SECOND, 0);
+        cal2.set(Calendar.MILLISECOND, 0);
 
-    /**
-     * conver Date to LocalDate
-     *
-     * @param date {@link Date}
-     * @return
-     */
-    public LocalDate toLocalDate(Date date) {
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return cal1.equals(cal2);
     }
 }

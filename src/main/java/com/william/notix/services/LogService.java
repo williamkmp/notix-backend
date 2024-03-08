@@ -11,7 +11,6 @@ import com.william.notix.repositories.UserLogRespository;
 import com.william.notix.repositories.UserRepository;
 import com.william.notix.utils.values.TOPIC;
 import jakarta.transaction.Transactional;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 import lombok.NonNull;
@@ -40,11 +39,11 @@ public class LogService {
     @Transactional
     public Optional<LogDto> serializeUserLog(@NonNull UserLog updateRecord) {
         try {
-            String projectId = updateRecord.getRefrencedProject() != null
-                ? updateRecord.getRefrencedProject().getId().toString()
-                : null;
             String userId = updateRecord.getRefrencedUser() != null
                 ? updateRecord.getRefrencedUser().getId().toString()
+                : null;
+            String projectId = updateRecord.getRefrencedProject() != null
+                ? updateRecord.getRefrencedProject().getId().toString()
                 : null;
             String subprojectId = updateRecord.getRefrencedSubproject() != null
                 ? updateRecord.getRefrencedSubproject().getId().toString()
@@ -80,6 +79,7 @@ public class LogService {
             String userId = updateRecord.getRefrencedUser() != null
                 ? updateRecord.getRefrencedUser().getId().toString()
                 : null;
+            String projectId = updateRecord.getUpdatee().getId().toString();
             String subprojectId = updateRecord.getRefrencedSubproject() != null
                 ? updateRecord.getRefrencedSubproject().getId().toString()
                 : null;
@@ -88,6 +88,7 @@ public class LogService {
                     .setId(updateRecord.getId().toString())
                     .setTitle(updateRecord.getTitle())
                     .setUserId(userId)
+                    .setProjectId(projectId)
                     .setSubprojectId(subprojectId)
                     .setMessage(updateRecord.getMessage())
                     .setCreatedAt(updateRecord.getCreatedAt())
@@ -286,9 +287,6 @@ public class LogService {
         @NonNull Date newEndDate
     ) {
         try {
-            SimpleDateFormat dtmFormatter = new SimpleDateFormat(
-                "MMMM d, yyyy"
-            );
             User updater = userRepository
                 .findById(updaterId)
                 .orElseThrow(Exception::new);
@@ -300,11 +298,7 @@ public class LogService {
                 new ProjectLog()
                     .setTitle("Update Period")
                     .setMessage(
-                        "<p><strong>{{user.fullName}} </strong>updated project's active period to</p><p><em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
-                        dtmFormatter.format(newStartDate) +
-                        " → " +
-                        dtmFormatter.format(newEndDate) +
-                        "</mark></em></p>"
+                        "<p><strong>{{user.fullName}} </strong>updated project's active period to</p><p><em><mark class=\"bg-sky-100 rounded-none px-0.5\">{{project.startDate}} → {{project.endDate}}</mark></em></p>"
                     )
                     .setRefrencedUser(updater)
                     .setUpdatee(project)

@@ -28,7 +28,7 @@ public class UserLog {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "message", nullable = false)
+    @Column(name = "message", nullable = false, columnDefinition = "TEXT")
     private String message = "<p></p>";
 
     @Column(name = "title", nullable = false)
