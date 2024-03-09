@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Slf4j
-@Controller("projectAddMemberAction")
+@Controller("projectGetMemberAction")
 @RequiredArgsConstructor
 public class Action {
 

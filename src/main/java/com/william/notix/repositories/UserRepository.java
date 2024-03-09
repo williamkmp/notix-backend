@@ -70,7 +70,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 SELECT a.user.id
                 FROM authorities a WHERE a.project.id = : projectId
            )
-           OR u.id (
+           OR u.id IN (
                 SELECT p.owner.id
                 FROM projects p where p.id = :projectId
            )
