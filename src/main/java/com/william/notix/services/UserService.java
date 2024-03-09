@@ -129,4 +129,20 @@ public class UserService {
         }
         return Objects.equals(user.getId(), userId);
     }
+
+    /**
+     * get all project member including owner
+     *
+     * @param projectId {@link Long} projectId
+     * @return {@link Optional}<{@link List}<{@link User}>> project members
+     */
+    public Optional<List<User>> findAllByProject(@NonNull Long projectId) {
+        try {
+            List<User> members = userRepository.findAllByProject(projectId);
+            return Optional.of(members);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
 }

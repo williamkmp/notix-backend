@@ -44,6 +44,16 @@ public class TOPIC {
     }
 
     /**
+     * STOMP destination url for /topic/project/{projectId}
+     *
+     * @param projectId {@link Long} project id
+     * @return {@link String} STOMP destination path
+     */
+    public static String project(Long projectId) {
+        return "/topic/project/" + projectId.toString();
+    }
+
+    /**
      * STOMP destination url for /topic/project/{projectId}/logs
      *
      * @param projectId {@link Long} project id
@@ -54,13 +64,13 @@ public class TOPIC {
     }
 
     /**
-     * STOMP destination url for /topic/project/{projectId}
+     * STOMP destination url for /topic/project/{projectId}/members
      *
      * @param projectId {@link Long} project id
      * @return {@link String} STOMP destination path
      */
-    public static String project(Long projectId) {
-        return "/topic/project/" + projectId.toString();
+    public static String projectMembers(Long projectId) {
+        return "/topic/project/" + projectId.toString() + "/members";
     }
 
     /**

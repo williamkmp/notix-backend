@@ -56,4 +56,25 @@ public interface UserRepository extends JpaRepository<User, Long> {
         @Param("emailQuery") String emailString,
         @Param("projectId") Long projectId
     );
+
+    /**
+     * find all project member
+     *
+     * @param projectId {@link Long} project id
+     * @return {@link List}<{@link User}> search results
+     */
+    @Query(
+        """
+           SELECT u FROM users u
+           WHERE u.id IN (
+                SELECT a.user.id
+                FROM authorities a WHERE a.project.id = : projectId
+           )
+           OR u.id (
+                SELECT p.owner.id
+                FROM projects p where p.id = :projectId
+           )
+        """
+    )
+    List<User> findAllByProject(@Param("projectId") Long projectId);
 }
