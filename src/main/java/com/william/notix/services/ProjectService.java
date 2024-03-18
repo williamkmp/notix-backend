@@ -113,9 +113,16 @@ public class ProjectService {
 
             Long ownerId = project.getOwner().getId();
             Long memberId = newMember.getId();
-
+            
             if (Objects.equals(ownerId, memberId)) {
                 return Optional.of(project.getOwner());
+            }
+            
+            Optional<Authority> authority = authorityRepository
+                .findByUserAndProject(memberId, projectId);
+            
+            if(authority.isPresent()) {
+                return Optional.empty();
             }
 
             authorityRepository.save(

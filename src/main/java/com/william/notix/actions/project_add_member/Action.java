@@ -12,6 +12,7 @@ import com.william.notix.exceptions.socket.ForbiddenProjectException;
 import com.william.notix.exceptions.socket.NotFoundProjectException;
 import com.william.notix.exceptions.socket.StandardProjectSocketException;
 import com.william.notix.services.AuthorityService;
+import com.william.notix.services.LogService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.TOPIC;
@@ -32,6 +33,7 @@ public class Action {
 
     private final AuthorityService authorityService;
     private final ProjectService projectService;
+    private final LogService logService;
     private final SimpMessagingTemplate socket;
 
     @MessageMapping("/project/{projectId}/member.add")
@@ -62,6 +64,13 @@ public class Action {
                 if (invitedUser.isEmpty()) {
                     continue;
                 }
+
+                logService.logUserIsInvitedToProject(
+                    caller.getId(), 
+                    invitedUser.get().getId(), 
+                    projectId
+                );
+                
                 User newMember = invitedUser.get();
                 socket.convertAndSend(
                     TOPIC.userProjectPreviews(newMember.getId()),

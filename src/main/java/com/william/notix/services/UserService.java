@@ -55,6 +55,22 @@ public class UserService {
         }
     }
 
+     /**
+     * find user by email
+     *
+     * @param userId {@link Long} user id
+     * @return {@link Optional}<{@link User}> registered user information, else empty if not found
+     */
+    public Optional<User> findByEmail(String email) {
+        try {
+            return userRepository.findByEmail(email);
+        } catch (Exception e) {
+            log.error("Error finding user email: {}", email);
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
     /**
      * search users by email address containing string
      *
