@@ -312,4 +312,36 @@ public class LogService {
             e.printStackTrace();
         }
     }
+
+    @Transactional
+    public void projcetMemberAdded(
+        @NonNull Long projectId,
+        @NonNull Long newMemberId
+    ) {
+        try {
+            User member = userRepository
+                .findById(newMemberId)
+                .orElseThrow(Exception::new);
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(Exception::new);
+            
+            ProjectLog updateRecord = projectLogRepository.saveAndFlush(
+                new ProjectLog()
+                    .setTitle("New Member")
+                    .setMessage(
+                        "<p><strong>{{user.fullName}}</strong> is added to this project.</p>"
+                    )
+                    .setRefrencedUser(member)
+                    .setUpdatee(project)
+            );
+
+            LogDto dto = serializeProjectLog(updateRecord)
+                .orElseThrow(Exception::new);
+            
+            socket.convertAndSend(TOPIC.projectLogs(projectId), dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

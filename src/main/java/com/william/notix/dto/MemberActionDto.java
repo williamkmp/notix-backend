@@ -1,6 +1,8 @@
 package com.william.notix.dto;
 
 import com.william.notix.utils.values.ACTION;
+import com.william.notix.utils.values.ROLE;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,6 +20,8 @@ public class MemberActionDto {
     @NonNull private String email;
 
     @NonNull private String fullName;
+
+    @NonNull private ROLE role;
 
     private String imageId;
 }

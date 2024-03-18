@@ -3,6 +3,7 @@ package com.william.notix.actions.project_add_member;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
 import com.william.notix.dto.InviteDto;
+import com.william.notix.dto.MemberActionDto;
 import com.william.notix.dto.ProjectPreviewDto;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
@@ -14,6 +15,7 @@ import com.william.notix.exceptions.socket.StandardProjectSocketException;
 import com.william.notix.services.AuthorityService;
 import com.william.notix.services.LogService;
 import com.william.notix.services.ProjectService;
+import com.william.notix.utils.values.ACTION;
 import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.TOPIC;
 import java.util.List;
@@ -64,11 +66,17 @@ public class Action {
                 if (invitedUser.isEmpty()) {
                     continue;
                 }
+                User member = invitedUser.get();
 
                 logService.userInvitedToProject(
                     caller.getId(), 
                     invitedUser.get().getId(), 
-                    projectId
+                    project.getId()
+                );
+
+                logService.projcetMemberAdded(
+                    project.getId(), 
+                    invitedUser.get().getId()
                 );
                 
                 User newMember = invitedUser.get();
@@ -79,6 +87,21 @@ public class Action {
                         .setId(project.getId().toString())
                         .setName(project.getName())
                         .setImageId(imageId)
+                );
+
+                String memberImageId = member.getImage() != null 
+                    ? member.getImage().getId().toString()
+                    : null;
+
+                socket.convertAndSend(
+                    TOPIC.projectMembers(project.getId()), 
+                    new MemberActionDto()
+                        .setAction(ACTION.ADD)
+                        .setId(member.getId().toString())
+                        .setEmail(member.getEmail())
+                        .setFullName(member.getFullName())
+                        .setImageId(memberImageId)
+                        .setRole(invite.getRole())
                 );
             }
         } catch (ResourceNotFoundException e) {
