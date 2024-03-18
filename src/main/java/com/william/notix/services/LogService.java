@@ -111,7 +111,7 @@ public class LogService {
      * @param projectId {@link Long} project id
      */
     @Transactional
-    public void logUserIsInvitedToProject(
+    public void userInvitedToProject(
         @NonNull Long inviterId,
         @NonNull Long inviteeId,
         @NonNull Long projectId
@@ -156,7 +156,7 @@ public class LogService {
      * @param newTitle {@link String} new title
      */
     @Transactional
-    public void logProjectCreated(
+    public void createProject(
         @NonNull Long projectId,
         @NonNull Long creatorId
     ) {
@@ -196,7 +196,7 @@ public class LogService {
      * @param newTitle {@link String} new title
      */
     @Transactional
-    public void logProjectChangeName(
+    public void updateProjectName(
         @NonNull Long projectId,
         @NonNull Long updaterId,
         @NonNull String oldTitle,
@@ -240,7 +240,7 @@ public class LogService {
      * @param newOwnerId {@link Long} new owner's user id
      */
     @Transactional
-    public void logProjectOwnershipTransfer(
+    public void projectTransferOwner(
         @NonNull Long projectId,
         @NonNull Long newOwnerId
     ) {
@@ -280,7 +280,7 @@ public class LogService {
      * @param newEndDate {@link Date} new end date
      */
     @Transactional
-    public void logProjectUpdatePeriod(
+    public void updateProjectPeriod(
         @NonNull Long projectId,
         @NonNull Long updaterId,
         @NonNull Date newStartDate,

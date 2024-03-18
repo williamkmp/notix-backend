@@ -65,7 +65,7 @@ public class Action {
                     continue;
                 }
 
-                logService.logUserIsInvitedToProject(
+                logService.userInvitedToProject(
                     caller.getId(), 
                     invitedUser.get().getId(), 
                     projectId

@@ -54,7 +54,7 @@ public class ProjectService {
                 .orElseThrow(UserNotFoundException::new);
             newProject.setOwner(owner);
             Project savedProject = projectRepository.save(newProject);
-            logService.logProjectCreated(savedProject.getId(), owner.getId());
+            logService.createProject(savedProject.getId(), owner.getId());
             return Optional.of(savedProject);
         } catch (UserNotFoundException e) {
             throw new UserNotFoundException();
@@ -203,7 +203,7 @@ public class ProjectService {
             project = projectRepository.save(project);
 
             if (isTitleUpdated) {
-                logService.logProjectChangeName(
+                logService.updateProjectName(
                     projectId,
                     updaterId,
                     oldProjectName,
@@ -212,7 +212,7 @@ public class ProjectService {
             }
 
             if (isDurationChanged) {
-                logService.logProjectUpdatePeriod(
+                logService.updateProjectPeriod(
                     projectId,
                     newOwner.getId(),
                     newProjectData.getStartDate(),
@@ -221,7 +221,7 @@ public class ProjectService {
             }
 
             if (isOwnerChanged) {
-                logService.logProjectOwnershipTransfer(
+                logService.projectTransferOwner(
                     projectId,
                     newOwner.getId()
                 );
