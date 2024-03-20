@@ -7,10 +7,14 @@ import com.william.notix.dto.MemberDto;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ForbiddenException;
+import com.william.notix.exceptions.runtime.MismatchedDataException;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
+import com.william.notix.exceptions.runtime.UnauthorizedException;
+import com.william.notix.exceptions.socket.DataConflictProjectException;
 import com.william.notix.exceptions.socket.ForbiddenProjectException;
 import com.william.notix.exceptions.socket.NotFoundProjectException;
 import com.william.notix.exceptions.socket.StandardProjectSocketException;
+import com.william.notix.exceptions.socket.UnauthorizedProjectException;
 import com.william.notix.services.AuthorityService;
 import com.william.notix.services.LogService;
 import com.william.notix.services.ProjectService;
@@ -46,18 +50,14 @@ public class Action {
         @Caller User caller
     ) throws StandardProjectSocketException {
         try {
-            Long memberId = Long.valueOf(payload.getId());
-            User member = userService
-                .findById(memberId)
-                .orElseThrow(ResourceNotFoundException::new);
-
             Project project = projectService
                 .findById(projectId)
                 .orElseThrow(ResourceNotFoundException::new);
 
             ROLE callerRole = authorityService
                 .getUserProjectRole(caller.getId(), project.getId())
-                .orElseThrow(ForbiddenException::new);
+                .orElseThrow(UnauthorizedException::new);
+
             boolean canUpdateMember = authorityService.roleCanOperateMember(
                 callerRole
             );
@@ -65,9 +65,14 @@ public class Action {
                 throw new ForbiddenException();
             }
 
+            Long memberId = Long.valueOf(payload.getId());
+            User member = userService
+                .findById(memberId)
+                .orElseThrow(MismatchedDataException::new);
+
             ROLE prevRole = authorityService
                 .getUserProjectRole(member.getId(), project.getId())
-                .orElseThrow(Exception::new);
+                .orElseThrow(MismatchedDataException::new);
 
             if (Objects.equals(prevRole, payload.getRole())) {
                 return;
@@ -79,7 +84,7 @@ public class Action {
                     project.getId(),
                     payload.getRole()
                 )
-                .orElseThrow(Exception::new);
+                .orElseThrow(MismatchedDataException::new);
 
             String memberImageId = member.getImage() != null
                 ? member.getImage().getId().toString()
@@ -106,6 +111,11 @@ public class Action {
                 .setSessionUuid(sessionUuid)
                 .setProjectId(projectId)
                 .setUserId(caller.getId());
+        } catch (UnauthorizedException e) {
+            throw new UnauthorizedProjectException()
+                .setSessionUuid(sessionUuid)
+                .setProjectId(projectId)
+                .setUserId(caller.getId());
         } catch (ForbiddenException e) {
             throw new ForbiddenProjectException()
                 .setSessionUuid(sessionUuid)
@@ -121,6 +131,10 @@ public class Action {
                 .addArgument(caller.getId().toString())
                 .addArgument(payload);
             e.printStackTrace();
+            throw new DataConflictProjectException()
+                .setSessionUuid(sessionUuid)
+                .setProjectId(projectId)
+                .setUserId(caller.getId());
         }
     }
 }

@@ -8,9 +8,12 @@ import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ForbiddenException;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
+import com.william.notix.exceptions.runtime.UnauthorizedException;
+import com.william.notix.exceptions.socket.DataConflictProjectException;
 import com.william.notix.exceptions.socket.ForbiddenProjectException;
 import com.william.notix.exceptions.socket.NotFoundProjectException;
 import com.william.notix.exceptions.socket.StandardProjectSocketException;
+import com.william.notix.exceptions.socket.UnauthorizedProjectException;
 import com.william.notix.services.AuthorityService;
 import com.william.notix.services.LogService;
 import com.william.notix.services.ProjectService;
@@ -50,7 +53,7 @@ public class Action {
 
             ROLE callerRole = authorityService
                 .getUserProjectRole(caller.getId(), project.getId())
-                .orElseThrow(ForbiddenException::new);
+                .orElseThrow(UnauthorizedException::new);
 
             boolean canDeleteMember = authorityService.roleCanOperateMember(
                 callerRole
@@ -84,6 +87,11 @@ public class Action {
                 .setSessionUuid(sessionUuid)
                 .setProjectId(projectId)
                 .setUserId(caller.getId());
+        } catch (UnauthorizedException e) {
+            throw new UnauthorizedProjectException()
+                .setSessionUuid(sessionUuid)
+                .setProjectId(projectId)
+                .setUserId(caller.getId());
         } catch (ForbiddenException e) {
             throw new ForbiddenProjectException()
                 .setSessionUuid(sessionUuid)
@@ -99,6 +107,10 @@ public class Action {
                 .addArgument(caller.getId().toString())
                 .addArgument(payload);
             e.printStackTrace();
+            throw new DataConflictProjectException()
+                .setSessionUuid(sessionUuid)
+                .setProjectId(projectId)
+                .setUserId(caller.getId());
         }
     }
 }
