@@ -9,6 +9,7 @@ import com.william.notix.repositories.ProjectLogRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserLogRespository;
 import com.william.notix.repositories.UserRepository;
+import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
 import jakarta.transaction.Transactional;
 import java.util.Date;
@@ -313,6 +314,12 @@ public class LogService {
         }
     }
 
+    /**
+     * add to project updateRecord a new member is added
+     *
+     * @param projectId {@link Long} project id
+     * @param newMemberId {@link Long} user id
+     */
     @Transactional
     public void projcetMemberAdded(
         @NonNull Long projectId,
@@ -325,7 +332,7 @@ public class LogService {
             Project project = projectRepository
                 .findById(projectId)
                 .orElseThrow(Exception::new);
-            
+
             ProjectLog updateRecord = projectLogRepository.saveAndFlush(
                 new ProjectLog()
                     .setTitle("New Member")
@@ -338,7 +345,94 @@ public class LogService {
 
             LogDto dto = serializeProjectLog(updateRecord)
                 .orElseThrow(Exception::new);
-            
+
+            socket.convertAndSend(TOPIC.projectLogs(projectId), dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * log member role is changed in a certaion project
+     *
+     * @param projectId {@link Long} project id
+     * @param memberId {@link Long} user id
+     * @param role {@link ROLE} new role
+     */
+    @Transactional
+    public void projectMemberRoleChange(
+        @NonNull Long projectId,
+        @NonNull Long memberId,
+        @NonNull ROLE role
+    ) {
+        try {
+            User member = userRepository
+                .findById(memberId)
+                .orElseThrow(Exception::new);
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(Exception::new);
+
+            String roleDisplayName =
+                switch (role) {
+                    case VIEWER -> "Viewer";
+                    case DEVELOPER -> "Developer";
+                    case PENETRATION_TESTER -> "Tester";
+                    case TECHNICAL_WRITER -> "Technical Writer";
+                    case PROJECT_MANAGER -> "Project Manager";
+                    default -> throw new IllegalArgumentException(
+                        "Unexpected value: " + role
+                    );
+                };
+
+            ProjectLog updateRecord = projectLogRepository.saveAndFlush(
+                new ProjectLog()
+                    .setTitle("Role Changed")
+                    .setMessage(
+                        "<p><strong>{{user.fullName}}'s</strong> role is changed to <em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
+                        roleDisplayName +
+                        "</mark></em></p>"
+                    )
+                    .setRefrencedUser(member)
+                    .setUpdatee(project)
+            );
+
+            LogDto dto = serializeProjectLog(updateRecord)
+                .orElseThrow(Exception::new);
+
+            socket.convertAndSend(TOPIC.projectLogs(projectId), dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional
+    public void projectMemberDelete(
+        @NonNull Long projectId,
+        @NonNull Long memberId
+    ) {
+        try {
+            User member = userRepository
+                .findById(memberId)
+                .orElseThrow(Exception::new);
+
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(Exception::new);
+
+            ProjectLog updateRecord = projectLogRepository.saveAndFlush(
+                new ProjectLog()
+                    .setTitle("Member Removed")
+                    .setMessage(
+                        "<p><strong>{{user.fullName}}</strong> is removed from this project</p>"
+                    )
+                    .setRefrencedUser(member)
+                    .setUpdatee(project)
+            );
+
+            LogDto dto = serializeProjectLog(updateRecord)
+                .orElseThrow(Exception::new);
+
             socket.convertAndSend(TOPIC.projectLogs(projectId), dto);
         } catch (Exception e) {
             e.printStackTrace();
