@@ -55,7 +55,7 @@ public class UserService {
         }
     }
 
-     /**
+    /**
      * find user by email
      *
      * @param userId {@link Long} user id

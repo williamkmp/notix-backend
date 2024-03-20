@@ -113,15 +113,15 @@ public class ProjectService {
 
             Long ownerId = project.getOwner().getId();
             Long memberId = newMember.getId();
-            
+
             if (Objects.equals(ownerId, memberId)) {
                 return Optional.of(project.getOwner());
             }
-            
-            Optional<Authority> authority = authorityRepository
-                .findByUserAndProject(memberId, projectId);
-            
-            if(authority.isPresent()) {
+
+            Optional<Authority> authority =
+                authorityRepository.findByUserAndProject(memberId, projectId);
+
+            if (authority.isPresent()) {
                 return Optional.empty();
             }
 
@@ -221,10 +221,7 @@ public class ProjectService {
             }
 
             if (isOwnerChanged) {
-                logService.projectTransferOwner(
-                    projectId,
-                    newOwner.getId()
-                );
+                logService.projectTransferOwner(projectId, newOwner.getId());
             }
             return Optional.of(project);
         } catch (UserNotFoundException | ResourceNotFoundException e) {
@@ -235,6 +232,44 @@ public class ProjectService {
         }
     }
 
+    /**
+     * delete a project member
+     *
+     * @param projectId {@link Long} project id
+     * @param memberId {@link Long} user id
+     * @return {@link Optional}<{@link }>
+     */
+    public Optional<User> deletePageMember(
+        @NonNull Long projectId,
+        @NonNull Long memberId
+    ) {
+        try {
+            Optional<Authority> maybeAUthority =
+                authorityRepository.findByUserAndProject(memberId, projectId);
+
+            if (maybeAUthority.isEmpty()) {
+                throw new ResourceNotFoundException();
+            }
+
+            Authority authority = maybeAUthority.get();
+            User member = userRepository
+                .findById(memberId)
+                .orElseThrow(UserNotFoundException::new);
+            authorityRepository.delete(authority);
+
+            return Optional.of(member);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * get project logs by a given project id, with paging
+     *
+     * @param projectId {@link Long} project id
+     * @param page {@link Pageable} paging information
+     * @return {@link Optional}<{@link {@link List}<{@link ProjectLog}>}>
+     */
     public Optional<List<ProjectLog>> findLogsById(
         @NonNull Long projectId,
         @NonNull Pageable page
