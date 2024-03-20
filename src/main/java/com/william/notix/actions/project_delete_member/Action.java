@@ -70,18 +70,20 @@ public class Action {
             );
 
             if (maybeMember.isEmpty()) {
-                User deletedMember = maybeMember.get();
-                socket.convertAndSend(
-                    TOPIC.projectMembers(projectId),
-                    new MemberActionDto()
-                        .setAction(ACTION.DELETE)
-                        .setId(deletedMember.getId().toString())
-                        .setFullName(deletedMember.getFullName())
-                        .setEmail(deletedMember.getEmail())
-                );
-
-                logService.projectMemberDelete(projectId, memberId);
+                return;
             }
+
+            User deletedMember = maybeMember.get();
+            socket.convertAndSend(
+                TOPIC.projectMembers(projectId),
+                new MemberActionDto()
+                    .setAction(ACTION.DELETE)
+                    .setId(deletedMember.getId().toString())
+                    .setFullName(deletedMember.getFullName())
+                    .setEmail(deletedMember.getEmail())
+            );
+            logService.projectMemberDelete(projectId, memberId);
+
         } catch (ResourceNotFoundException e) {
             throw new NotFoundProjectException()
                 .setSessionUuid(sessionUuid)
