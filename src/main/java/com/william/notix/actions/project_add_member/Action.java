@@ -17,6 +17,7 @@ import com.william.notix.services.LogService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.ACTION;
 import com.william.notix.utils.values.PREVIEW_ACTION;
+import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
 import java.util.List;
 import java.util.Optional;
@@ -50,9 +51,16 @@ public class Action {
                 .findById(projectId)
                 .orElseThrow(ResourceNotFoundException::new);
 
-            authorityService
+            ROLE callerRole = authorityService
                 .getUserProjectRole(caller.getId(), project.getId())
                 .orElseThrow(ForbiddenException::new);
+
+            boolean canAddMember = authorityService.roleCanOperateMember(
+                callerRole
+            );
+            if (!canAddMember) {
+                throw new ForbiddenException();
+            }
 
             String imageId = project.getImage() != null
                 ? project.getImage().getId().toString()
@@ -69,16 +77,16 @@ public class Action {
                 User member = invitedUser.get();
 
                 logService.userInvitedToProject(
-                    caller.getId(), 
-                    invitedUser.get().getId(), 
+                    caller.getId(),
+                    invitedUser.get().getId(),
                     project.getId()
                 );
 
                 logService.projcetMemberAdded(
-                    project.getId(), 
+                    project.getId(),
                     invitedUser.get().getId()
                 );
-                
+
                 User newMember = invitedUser.get();
                 socket.convertAndSend(
                     TOPIC.userProjectPreviews(newMember.getId()),
@@ -89,12 +97,12 @@ public class Action {
                         .setImageId(imageId)
                 );
 
-                String memberImageId = member.getImage() != null 
+                String memberImageId = member.getImage() != null
                     ? member.getImage().getId().toString()
                     : null;
 
                 socket.convertAndSend(
-                    TOPIC.projectMembers(project.getId()), 
+                    TOPIC.projectMembers(project.getId()),
                     new MemberActionDto()
                         .setAction(ACTION.ADD)
                         .setId(member.getId().toString())
@@ -118,7 +126,7 @@ public class Action {
             log
                 .atError()
                 .setMessage(
-                    "Error [STOMP] /project/{}, callerId:{}, payload:{}"
+                    "Error [STOMP] /project/{}/member.add, callerId:{}, payload:{}"
                 )
                 .addArgument(projectId.toString())
                 .addArgument(caller.getId().toString())

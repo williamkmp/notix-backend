@@ -15,6 +15,7 @@ import com.william.notix.services.AuthorityService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.KEY;
 import com.william.notix.utils.values.PREVIEW_ACTION;
+import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +45,17 @@ public class Action {
         try {
             String USER_ID = KEY.STOMP_HEADER_CALLER_USER_ID;
             String SESSION = KEY.STOMP_HEADER_CALLER_SESSION_UUID;
-            authorityService
+
+            ROLE callerRole = authorityService
                 .getUserProjectRole(caller.getId(), projectId)
                 .orElseThrow(ForbiddenException::new);
+
+            boolean canUpdateProject = authorityService.roleCanOperateProject(
+                callerRole
+            );
+            if (!canUpdateProject) {
+                throw new ForbiddenException();
+            }
 
             Project updatedProject = projectService
                 .updateProject(projectId, caller.getId(), newProjectData)
