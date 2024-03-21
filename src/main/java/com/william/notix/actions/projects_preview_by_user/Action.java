@@ -2,7 +2,7 @@ package com.william.notix.actions.projects_preview_by_user;
 
 import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;
-import com.william.notix.dto.ProjectPreviewDto;
+import com.william.notix.dto.PreviewActionDto;
 import com.william.notix.dto.response.Response;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
@@ -23,15 +23,15 @@ public class Action {
 
     @GetMapping("/api/user/projects/preview")
     @Authenticated(true)
-    public Response<ProjectPreviewDto[]> action(@Caller User caller) {
+    public Response<PreviewActionDto[]> action(@Caller User caller) {
         try {
             List<Project> projects = projectService.findAllByUser(
                 caller.getId()
             );
-            List<ProjectPreviewDto> resultList = projects
+            List<PreviewActionDto> resultList = projects
                 .stream()
                 .map(project ->
-                    new ProjectPreviewDto()
+                    new PreviewActionDto()
                         .setId(project.getId().toString())
                         .setName(project.getName())
                         .setImageId(
@@ -41,8 +41,8 @@ public class Action {
                         )
                 )
                 .toList();
-            return new Response<ProjectPreviewDto[]>()
-                .setData(resultList.toArray(new ProjectPreviewDto[0]));
+            return new Response<PreviewActionDto[]>()
+                .setData(resultList.toArray(new PreviewActionDto[0]));
         } catch (Exception e) {
             log.error(
                 "Error [GET] /api/user/projects callerId:{}",

@@ -4,7 +4,7 @@ import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.dto.InviteDto;
 import com.william.notix.dto.ProjectDto;
-import com.william.notix.dto.ProjectPreviewDto;
+import com.william.notix.dto.PreviewActionDto;
 import com.william.notix.dto.response.Response;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
@@ -66,7 +66,7 @@ public class Action {
                 User newMember = invitedUser.get();
                 socket.convertAndSend(
                     TOPIC.userProjectPreviews(newMember.getId()),
-                    new ProjectPreviewDto()
+                    new PreviewActionDto()
                         .setAction(PREVIEW_ACTION.ADD_CHILD)
                         .setId(createdProject.getId().toString())
                         .setName(createdProject.getName())
@@ -76,7 +76,7 @@ public class Action {
 
             socket.convertAndSend(
                 TOPIC.userProjectPreviews(caller.getId()),
-                new ProjectPreviewDto()
+                new PreviewActionDto()
                     .setAction(PREVIEW_ACTION.ADD_CHILD)
                     .setId(createdProject.getId().toString())
                     .setName(createdProject.getName())

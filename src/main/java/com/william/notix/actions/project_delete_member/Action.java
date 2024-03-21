@@ -4,6 +4,7 @@ import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
 import com.william.notix.dto.MemberActionDto;
 import com.william.notix.dto.MemberDto;
+import com.william.notix.dto.PreviewActionDto;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ForbiddenException;
@@ -18,6 +19,7 @@ import com.william.notix.services.AuthorityService;
 import com.william.notix.services.LogService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.ACTION;
+import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
 import java.util.Optional;
@@ -82,8 +84,21 @@ public class Action {
                     .setFullName(deletedMember.getFullName())
                     .setEmail(deletedMember.getEmail())
             );
-            logService.projectMemberDelete(projectId, memberId);
 
+            String projectImageId = project.getImage() != null
+                ? project.getImage().getId().toString()
+                : null;
+
+            socket.convertAndSend(
+                TOPIC.projectPreview(projectId),
+                new PreviewActionDto()
+                    .setAction(PREVIEW_ACTION.DELETE_SELF)
+                    .setId(project.getId().toString())
+                    .setName(project.getName())
+                    .setImageId(projectImageId)
+            );
+
+            logService.projectMemberDelete(projectId, memberId);
         } catch (ResourceNotFoundException e) {
             throw new NotFoundProjectException()
                 .setSessionUuid(sessionUuid)

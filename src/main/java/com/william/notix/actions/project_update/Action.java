@@ -3,7 +3,7 @@ package com.william.notix.actions.project_update;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
 import com.william.notix.dto.ProjectDto;
-import com.william.notix.dto.ProjectPreviewDto;
+import com.william.notix.dto.PreviewActionDto;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ForbiddenException;
@@ -84,8 +84,8 @@ public class Action {
 
             socket.convertAndSend(
                 TOPIC.projectPreview(projectId),
-                new ProjectPreviewDto()
-                    .setAction(PREVIEW_ACTION.UPDATE)
+                new PreviewActionDto()
+                    .setAction(PREVIEW_ACTION.UPDATE_SELF)
                     .setId(projectId.toString())
                     .setName(updatedProject.getName())
                     .setImageId(imageId)

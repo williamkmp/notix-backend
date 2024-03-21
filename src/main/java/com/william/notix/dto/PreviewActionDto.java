@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @NoArgsConstructor
-public class ProjectPreviewDto {
+public class PreviewActionDto {
 
     @NonNull private PREVIEW_ACTION action;
 

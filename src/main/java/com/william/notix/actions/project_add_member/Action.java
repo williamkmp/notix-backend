@@ -4,7 +4,7 @@ import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
 import com.william.notix.dto.InviteDto;
 import com.william.notix.dto.MemberActionDto;
-import com.william.notix.dto.ProjectPreviewDto;
+import com.william.notix.dto.PreviewActionDto;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ForbiddenException;
@@ -93,7 +93,7 @@ public class Action {
                 User newMember = invitedUser.get();
                 socket.convertAndSend(
                     TOPIC.userProjectPreviews(newMember.getId()),
-                    new ProjectPreviewDto()
+                    new PreviewActionDto()
                         .setAction(PREVIEW_ACTION.ADD_CHILD)
                         .setId(project.getId().toString())
                         .setName(project.getName())
