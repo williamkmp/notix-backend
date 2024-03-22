@@ -41,7 +41,7 @@ public class Authority {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "subproject_id", referencedColumnName = "id")
-    private Subproject subProject;
+    private Subproject subproject;
 
     @Column(name = "role", nullable = false)
     private ROLE role = ROLE.VIEWER;
