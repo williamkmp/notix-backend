@@ -5,6 +5,7 @@ import com.william.notix.annotations.session_uuid.SessionUuid;
 import com.william.notix.dto.MemberActionDto;
 import com.william.notix.dto.MemberDto;
 import com.william.notix.dto.PreviewActionDto;
+import com.william.notix.entities.ExceptionDto;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ForbiddenException;
@@ -19,12 +20,17 @@ import com.william.notix.services.AuthorityService;
 import com.william.notix.services.LogService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.ACTION;
+import com.william.notix.utils.values.KEY;
 import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
+
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -90,12 +96,34 @@ public class Action {
                 : null;
 
             socket.convertAndSend(
-                TOPIC.projectPreview(projectId),
+                TOPIC.userProjectPreviews(memberId),
                 new PreviewActionDto()
-                    .setAction(PREVIEW_ACTION.DELETE_SELF)
+                    .setAction(PREVIEW_ACTION.DELETE_CHILD)
                     .setId(project.getId().toString())
                     .setName(project.getName())
                     .setImageId(projectImageId)
+            );
+
+            socket.convertAndSend(
+                TOPIC.userProjectPreviews(memberId),
+                new PreviewActionDto()
+                    .setAction(PREVIEW_ACTION.DELETE_CHILD)
+                    .setId(project.getId().toString())
+                    .setName(project.getName())
+                    .setImageId(projectImageId)
+            );
+
+            final String USER_ID = KEY.STOMP_HEADER_CALLER_USER_ID;
+            final String SESSION_UUID = KEY.STOMP_HEADER_CALLER_SESSION_UUID;
+            socket.convertAndSend(
+            TOPIC.userProjectErrors(memberId, projectId),
+                new ExceptionDto()
+                    .setStatus(HttpStatus.UNAUTHORIZED.value())
+                    .setMessage("Unauthorized"),
+                Map.ofEntries(
+                    Map.entry(USER_ID, memberId),
+                    Map.entry(SESSION_UUID, sessionUuid)
+                )
             );
 
             logService.projectMemberDelete(projectId, memberId);
