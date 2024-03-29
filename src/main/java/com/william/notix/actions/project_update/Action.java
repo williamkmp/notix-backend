@@ -58,7 +58,7 @@ public class Action {
             }
 
             Project updatedProject = projectService
-                .updateProject(projectId, caller.getId(), newProjectData)
+                .updateProjectHeader(projectId, caller.getId(), newProjectData)
                 .orElseThrow(ResourceNotFoundException::new);
 
             String imageId = updatedProject.getImage() != null

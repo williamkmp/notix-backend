@@ -142,7 +142,13 @@ public class ProjectService {
     }
 
     /**
-     * update a given project data.
+     * update a given project header data, this includes
+     * <ul>
+     *      <li>project name</li>
+     *      <li>project end date</li>
+     *      <li>project start date</li>
+     *      <li>project end date</li>
+     * </ul>
      *
      * @param projectId {@link Long} target project id
      * @param updaterId {@link Long} target project id
@@ -150,7 +156,7 @@ public class ProjectService {
      * @return {@link Optional}<{@link Project}> updated project data, else empty if update failed
      */
     @Transactional
-    public Optional<Project> updateProject(
+    public Optional<Project> updateProjectHeader(
         Long projectId,
         Long updaterId,
         ProjectDto newProjectData
