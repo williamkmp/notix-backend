@@ -70,7 +70,7 @@ public class Action {
             throw new ResourceNotFoundHttpException();
         } catch (Exception e) {
             log.atError()
-                .setMessage("Error [POST] /project/{}/picture, callerId:{}")
+                .setMessage("Error [DELETE] /project/{}/picture, callerId:{}")
                 .addArgument(projectId.toString())
                 .addArgument(caller.getId());
             e.printStackTrace();
