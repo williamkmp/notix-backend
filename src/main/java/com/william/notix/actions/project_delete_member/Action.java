@@ -24,12 +24,10 @@ import com.william.notix.utils.values.KEY;
 import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
-
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -116,7 +114,7 @@ public class Action {
             final String USER_ID = KEY.STOMP_HEADER_CALLER_USER_ID;
             final String SESSION_UUID = KEY.STOMP_HEADER_CALLER_SESSION_UUID;
             socket.convertAndSend(
-            TOPIC.userProjectErrors(memberId, projectId),
+                TOPIC.userProjectErrors(memberId, projectId),
                 new ExceptionDto()
                     .setStatus(HttpStatus.UNAUTHORIZED.value())
                     .setMessage("Unauthorized"),

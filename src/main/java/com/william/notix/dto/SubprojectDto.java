@@ -11,10 +11,16 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class SubprojectDto {
+
     @NonNull private String id;
+
     @NonNull private String projectId;
+
     @NonNull private String name;
+
     @NonNull private Date startDate;
+
     @NonNull private Date endDate;
+
     @NonNull private ROLE role;
 }

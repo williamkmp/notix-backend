@@ -1,11 +1,5 @@
 package com.william.notix.actions.subproject_create;
 
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
 import com.william.notix.dto.SubprojectActionDto;
@@ -26,9 +20,13 @@ import com.william.notix.services.SubprojectService;
 import com.william.notix.utils.values.ACTION;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 
 @Slf4j
 @Controller("subprojectCreateAction")
@@ -48,23 +46,24 @@ public class Action {
         @SessionUuid String sessionUuid
     ) throws StandardProjectSocketException {
         try {
-            Project project = projectService.findById(projectId)
+            Project project = projectService
+                .findById(projectId)
                 .orElseThrow(ResourceNotFoundException::new);
 
             ROLE callerRole = authorityService
                 .getUserProjectRole(caller.getId(), projectId)
                 .orElseThrow(UnauthorizedException::new);
 
-            boolean canAddOperateSubproject = authorityService
-                .roleCanAddSubproject(callerRole);
+            boolean canAddOperateSubproject =
+                authorityService.roleCanAddSubproject(callerRole);
 
-            if(!canAddOperateSubproject) {
+            if (!canAddOperateSubproject) {
                 throw new ForbiddenException();
-            } 
+            }
 
             Subproject createdSubproject = subprojectService
                 .addSubproject(
-                    project.getId(), 
+                    project.getId(),
                     new Subproject()
                         .setName(payload.getName())
                         .setStartDate(payload.getStartDate())
@@ -82,7 +81,6 @@ public class Action {
                     .setStartDate(createdSubproject.getStartDate())
                     .setStartDate(createdSubproject.getEndDate())
             );
-
         } catch (ResourceNotFoundException e) {
             throw new NotFoundProjectException()
                 .setSessionUuid(sessionUuid)

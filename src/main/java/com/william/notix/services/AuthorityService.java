@@ -64,23 +64,26 @@ public class AuthorityService {
         @NonNull Long subprojectId
     ) {
         try {
-            Optional<Authority> authority = authorityRepository
-                .findByUserAndSubproject(userId, subprojectId);
-            if(authority.isPresent()) {
+            Optional<Authority> authority =
+                authorityRepository.findByUserAndSubproject(
+                    userId,
+                    subprojectId
+                );
+            if (authority.isPresent()) {
                 return Optional.of(authority.get().getRole());
             }
 
-            Subproject subproject = subprojectRepository.findById(subprojectId)
+            Subproject subproject = subprojectRepository
+                .findById(subprojectId)
                 .orElseThrow(ResourceNotFoundException::new);
             Project parentProject = subproject.getProject();
             Long ownerId = parentProject.getOwner().getId();
             boolean isUserOwner = Objects.equals(ownerId, userId);
-            if(isUserOwner) {
+            if (isUserOwner) {
                 return Optional.of(ROLE.PROJECT_MANAGER);
             }
-            
+
             return Optional.empty();
-            
         } catch (Exception e) {
             return Optional.empty();
         }

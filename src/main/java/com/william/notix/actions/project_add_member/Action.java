@@ -141,7 +141,7 @@ public class Action {
                 .addArgument(invites);
             e.printStackTrace();
             throw new DataConflictProjectException()
-                .setSessionUuid(sessionUuid)    
+                .setSessionUuid(sessionUuid)
                 .setProjectId(projectId)
                 .setUserId(caller.getId());
         }

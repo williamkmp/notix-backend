@@ -1,16 +1,5 @@
 package com.william.notix.actions.project_upload_picture;
 
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
@@ -26,13 +15,20 @@ import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.services.FileService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.TOPIC;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Controller("projectUploadPictureAction")
 @RequiredArgsConstructor
 public class Action {
-    
+
     private final ProjectService projectService;
     private final FileService fileService;
     private final SimpMessagingTemplate socket;
@@ -46,18 +42,18 @@ public class Action {
         @SessionUuid String sessionUuid
     ) {
         try {
-            Project project = projectService.findById(projectId)
+            Project project = projectService
+                .findById(projectId)
                 .orElseThrow(ResourceNotFoundException::new);
-            
+
             File uploadedImage = fileService
                 .saveMultipartFile(formData, caller.getId())
                 .orElseThrow(Exception::new);
-            
-            FileDto imageInfo = fileService.updateProjectImage(
-                project.getId(), 
-                uploadedImage.getId()
-            ).orElseThrow(Exception::new);
-            
+
+            FileDto imageInfo = fileService
+                .updateProjectImage(project.getId(), uploadedImage.getId())
+                .orElseThrow(Exception::new);
+
             ProjectDto updatedProjectData = new ProjectDto()
                 .setId(project.getId().toString())
                 .setName(project.getName())
@@ -66,17 +62,14 @@ public class Action {
                 .setImageId(imageInfo.getId())
                 .setOwnerId(caller.getId().toString());
 
-            socket.convertAndSend(
-                TOPIC.project(projectId),
-                updatedProjectData
-            );
+            socket.convertAndSend(TOPIC.project(projectId), updatedProjectData);
 
-            return new Response<ProjectDto>()
-                .setData(updatedProjectData);
+            return new Response<ProjectDto>().setData(updatedProjectData);
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundHttpException();
         } catch (Exception e) {
-            log.atError()
+            log
+                .atError()
                 .setMessage("Error [POST] /project/{}/picture, callerId:{}")
                 .addArgument(projectId.toString())
                 .addArgument(caller.getId());
@@ -84,6 +77,4 @@ public class Action {
             throw new InternalServerErrorHttpException();
         }
     }
-    
-
 }
