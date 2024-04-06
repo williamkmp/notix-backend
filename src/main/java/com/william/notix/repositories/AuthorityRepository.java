@@ -25,4 +25,23 @@ public interface AuthorityRepository extends JpaRepository<Authority, Long> {
         @Param("userId") Long userId,
         @Param("projectId") Long projectId
     );
+
+    /**
+     * get authority information from a given user and subproject
+     *
+     * @param userId {@link Long} user id
+     * @param projectId {@link Long} project id
+     * @return {@link Optional}<{@link Authority}> user-project authority
+     */
+    @Query(
+        """
+            SELECT a
+            FROM authorities a
+            WHERE a.user.id = :userId AND a.subproject.id = :subprojectId
+        """
+    )
+    public Optional<Authority> findByUserAndSubproject(
+        @Param("userId") Long userId,
+        @Param("subprojectId") Long subprojectId
+    );
 }

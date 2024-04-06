@@ -82,4 +82,14 @@ public class TOPIC {
     public static String projectPreview(Long projectId) {
         return "/topic/project/" + projectId.toString() + "/preview";
     }
+
+    /**
+     * STOMP destination url for /topic/project/{projectId}/subprojects
+     *
+     * @param projectId {@link Long} project id
+     * @return {@link String} STOMP destination path
+     */
+    public static String projectSubprojects(Long projectId) {
+        return "/topic/project/" + projectId.toString() + "/subprojects";
+    }
 }

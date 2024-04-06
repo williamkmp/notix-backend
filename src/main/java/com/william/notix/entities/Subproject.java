@@ -36,10 +36,10 @@ public class Subproject {
     private String name = "";
 
     @Column(name = "start_date", nullable = false)
-    private OffsetDateTime startDate;
+    private Date startDate;
 
     @Column(name = "end_date", nullable = false)
-    private OffsetDateTime endDate;
+    private Date endDate;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)

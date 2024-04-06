@@ -2,8 +2,11 @@ package com.william.notix.services;
 
 import com.william.notix.entities.Authority;
 import com.william.notix.entities.Project;
+import com.william.notix.entities.Subproject;
+import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.repositories.AuthorityRepository;
 import com.william.notix.repositories.ProjectRepository;
+import com.william.notix.repositories.SubprojectRepository;
 import com.william.notix.utils.values.ROLE;
 import jakarta.transaction.Transactional;
 import java.util.Objects;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class AuthorityService {
 
     private final AuthorityRepository authorityRepository;
+    private final SubprojectRepository subprojectRepository;
     private final ProjectRepository projectRepository;
 
     /**
@@ -42,6 +46,41 @@ public class AuthorityService {
                 .findByUserAndProject(userId, projectId)
                 .orElseThrow(Exception::new);
             return Optional.ofNullable(authority.getRole());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * get the user ROLE in a given subproject, else return empty if user have no access
+     *
+     * @param userId {@link Long} user id
+     * @param subprojectId {@link Long} project id
+     * @return {@link Optional}<{@link ROLE}> user's role, else empty
+     */
+    @Transactional
+    public Optional<ROLE> getUserSubprojectRole(
+        @NonNull Long userId,
+        @NonNull Long subprojectId
+    ) {
+        try {
+            Optional<Authority> authority = authorityRepository
+                .findByUserAndSubproject(userId, subprojectId);
+            if(authority.isPresent()) {
+                return Optional.of(authority.get().getRole());
+            }
+
+            Subproject subproject = subprojectRepository.findById(subprojectId)
+                .orElseThrow(ResourceNotFoundException::new);
+            Project parentProject = subproject.getProject();
+            Long ownerId = parentProject.getOwner().getId();
+            boolean isUserOwner = Objects.equals(ownerId, userId);
+            if(isUserOwner) {
+                return Optional.of(ROLE.PROJECT_MANAGER);
+            }
+            
+            return Optional.empty();
+            
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -100,6 +139,16 @@ public class AuthorityService {
      * @return {@link boolean} role can operate project member
      */
     public boolean roleCanOperateProject(@NonNull ROLE role) {
+        return Objects.equals(role, ROLE.PROJECT_MANAGER);
+    }
+
+    /**
+     * check if a given role can add subprojects
+     *
+     * @param role {@link ROLE}
+     * @return {@link boolean} role can operate project member
+     */
+    public boolean roleCanAddSubproject(@NonNull ROLE role) {
         return Objects.equals(role, ROLE.PROJECT_MANAGER);
     }
 }
