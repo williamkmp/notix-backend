@@ -30,7 +30,7 @@ public class ProjectSeeder implements Seeder {
 
         projectService.createProject(
             new Project()
-                .setName("PC01 - Testy")
+                .setName("PC01 - Project 1")
                 .setStartDate(
                     toDate(LocalDate.now().atStartOfDay().plusDays(1))
                 )
@@ -40,7 +40,7 @@ public class ProjectSeeder implements Seeder {
 
         projectService.createProject(
             new Project()
-                .setName("PC02 - Notix")
+                .setName("PC02 - Project 2")
                 .setStartDate(toDate(LocalDate.now().atStartOfDay()))
                 .setEndDate(
                     toDate(LocalDate.now().atStartOfDay().plusWeeks(3))
@@ -50,7 +50,7 @@ public class ProjectSeeder implements Seeder {
 
         projectService.createProject(
             new Project()
-                .setName("PC03 - Taskly")
+                .setName("PC03 - Project 3")
                 .setStartDate(
                     toDate(LocalDate.now().atStartOfDay().minusWeeks(1))
                 )
