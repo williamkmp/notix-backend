@@ -1,11 +1,5 @@
 package com.william.notix.actions.project_get_subprojects;
 
-import java.util.List;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.dto.SubprojectDto;
@@ -21,9 +15,12 @@ import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.services.AuthorityService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.services.SubprojectService;
-
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Slf4j
 @Controller("projectGetSubprojectsAction")
@@ -47,22 +44,23 @@ public class Action {
             authorityService
                 .getUserProjectRole(caller.getId(), projectId)
                 .orElseThrow(ForbiddenException::new);
-            
-            List<Subproject> subprojects = subprojectService.findAllByProject(project.getId());
+
+            List<Subproject> subprojects = subprojectService.findAllByProject(
+                project.getId()
+            );
             SubprojectDto[] responseBody = subprojects
                 .stream()
-                .map(subproject -> new SubprojectDto()
-                    .setId(subproject.getId().toString())
-                    .setName(subproject.getName())
-                    .setStartDate(subproject.getStartDate())
-                    .setEndDate(subproject.getEndDate())
+                .map(subproject ->
+                    new SubprojectDto()
+                        .setId(subproject.getId().toString())
+                        .setName(subproject.getName())
+                        .setStartDate(subproject.getStartDate())
+                        .setEndDate(subproject.getEndDate())
                 )
                 .toList()
                 .toArray(new SubprojectDto[0]);
-            
-            return new Response<SubprojectDto[]>()
-                .setData(responseBody);
 
+            return new Response<SubprojectDto[]>().setData(responseBody);
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundHttpException();
         } catch (ForbiddenException e) {
