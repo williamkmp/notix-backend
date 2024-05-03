@@ -6,11 +6,16 @@ import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.SubprojectRepository;
 import jakarta.transaction.Transactional;
+
+import java.util.List;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubprojectService {
@@ -42,5 +47,21 @@ public class SubprojectService {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * get all subproject based of a given project id sorted by created at date
+     * 
+     * @param projectId {@link Long} project id
+     * @return {@link List}<{@link Subproject}> 
+     */
+    @Transactional
+    public List<Subproject> findAllByProject(
+        @NonNull Long projectId
+    ) {
+        Project project = projectRepository
+            .findById(projectId)
+            .orElseThrow(ResourceNotFoundException::new);
+        return subprojectRepository.findAllByProject(project.getId());
     }
 }
