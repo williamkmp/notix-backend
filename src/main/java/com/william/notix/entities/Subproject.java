@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +39,10 @@ public class Subproject {
 
     @Column(name = "end_date", nullable = false)
     private Date endDate;
+
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "image_id", referencedColumnName = "id", nullable = true)
+    private File image;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)

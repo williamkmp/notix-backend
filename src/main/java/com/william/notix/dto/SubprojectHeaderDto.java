@@ -23,4 +23,6 @@ public class SubprojectHeaderDto {
     @NonNull private Date endDate;
 
     @NonNull private ROLE role;
+
+    private String imageId;
 }

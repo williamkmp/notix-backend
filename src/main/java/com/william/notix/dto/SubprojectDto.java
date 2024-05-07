@@ -18,4 +18,6 @@ public class SubprojectDto {
     @NonNull private Date startDate;
 
     @NonNull private Date endDate;
+
+    private String imageId;
 }
