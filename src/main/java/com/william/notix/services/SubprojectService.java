@@ -22,6 +22,16 @@ public class SubprojectService {
     private final SubprojectRepository subprojectRepository;
 
     /**
+     * find subproject by subproject id
+     *
+     * @param subprojectId {@link Long} subproject id
+     * @return {@link Optional}<{@link Subproject}> subproject
+     */
+    public Optional<Subproject> findById(@NonNull Long subprojectId) {
+        return subprojectRepository.findById(subprojectId);
+    }
+
+    /**
      * create new subproject for a given project
      *
      * @param projectId {@link Long} project id

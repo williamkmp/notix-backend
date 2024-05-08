@@ -3,13 +3,16 @@ package com.william.notix.services;
 import com.william.notix.dto.FileDto;
 import com.william.notix.entities.File;
 import com.william.notix.entities.Project;
+import com.william.notix.entities.Subproject;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.exceptions.runtime.UserNotFoundException;
 import com.william.notix.repositories.FileRepository;
 import com.william.notix.repositories.ProjectRepository;
+import com.william.notix.repositories.SubprojectRepository;
 import com.william.notix.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileService {
 
     private String GET_FILE_URL = "http://localhost:5050/api/file/";
+    private final SubprojectRepository subprojectRepository;
     private final ProjectRepository projectRepository;
     private final FileRepository fileRepository;
     private final UserRepository userRepository;
@@ -169,6 +173,50 @@ public class FileService {
     }
 
     /**
+     * update existing subproject image
+     *
+     * @param projectId {@link Long} project id, not null
+     * @param newImageId {@link Long} file id, not null
+     * @return {@link Optional}<{@link FileDto}> image file information
+     */
+    @Transactional
+    public Optional<FileDto> updateSubprojectImage(
+        @NonNull Long subprojectId,
+        @NonNull Long newImageId
+    ) {
+        try {
+            Subproject subproject = subprojectRepository
+                .findById(subprojectId)
+                .orElseThrow(ResourceNotFoundException::new);
+            File previousImage = subproject.getImage();
+            if (
+                previousImage != null &&
+                !previousImage.getId().equals(newImageId)
+            ) {
+                fileRepository.delete(previousImage);
+            }
+            File newImage = fileRepository
+                .findById(newImageId)
+                .orElseThrow(ResourceNotFoundException::new);
+            subproject.setImage(newImage);
+            subprojectRepository.save(subproject);
+            FileDto fileInfo = getFileInfo(newImageId)
+                .orElseThrow(Exception::new);
+            return Optional.of(fileInfo);
+        } catch (ResourceNotFoundException e) {
+            return Optional.empty();
+        } catch (Exception e) {
+            log.error(
+                "Error updating subproject image, subprojectId: {}, imageId: {}",
+                subprojectId,
+                newImageId
+            );
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    /**
      * delete existing user image
      * @param userId {@link Long} user id, not null
      */
@@ -191,8 +239,9 @@ public class FileService {
 
     /**
      * delete existing project image
-     * @param projectId {@link Long} user id, not null
+     * @param projectId {@link Long} project id, not null
      */
+    @Transactional
     public void deleteImageOfProject(@NonNull Long projectId) {
         try {
             Project project = projectRepository
@@ -206,6 +255,31 @@ public class FileService {
             projectRepository.saveAndFlush(project);
         } catch (Exception e) {
             log.error("Error deleting project image, projectId: {}", projectId);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * delete existing subproject image
+     * @param subprojectId {@link Long} subproject id
+     */
+    @Transactional
+    public void deleteImageOfSubproject(@NonNull Long subprojectId) {
+        try {
+            Subproject subproject = subprojectRepository
+                .findById(subprojectId)
+                .orElseThrow(ResourceNotFoundException::new);
+            File previousImage = subproject.getImage();
+            if (!Objects.isNull(previousImage)) {
+                fileRepository.delete(previousImage);
+            }
+            subproject.setImage(null);
+            subprojectRepository.saveAndFlush(subproject);
+        } catch (Exception e) {
+            log.error(
+                "Error deleting subproject image, subprojectId: {}",
+                subprojectId
+            );
             e.printStackTrace();
         }
     }

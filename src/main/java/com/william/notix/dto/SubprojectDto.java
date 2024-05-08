@@ -13,6 +13,8 @@ public class SubprojectDto {
 
     @NonNull private String id;
 
+    @NonNull private String projectId;
+
     @NonNull private String name;
 
     @NonNull private Date startDate;
