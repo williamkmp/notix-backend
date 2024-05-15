@@ -13,6 +13,9 @@ import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.SubprojectRepository;
 import com.william.notix.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
@@ -331,5 +334,27 @@ public class FileService {
             e.printStackTrace();
             return Optional.empty();
         }
+    }
+
+    /**
+     * find all files of a given project by id, (reports and attachment)
+     * 
+     * @param projectId {@link Long} project id
+     * @return {@link Optional}<{@link List}<{@link File}>>
+     */
+    @Transactional
+    public Optional<List<File>> getProjectFiles(
+        @NonNull Long projectId
+    ) {
+        try {
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow();
+            List<File> projectFiles = fileRepository
+                .findAllByProject(project.getId());
+            return Optional.of(projectFiles);
+        } catch (Exception e) {
+            return Optional.empty();
+        }        
     }
 }

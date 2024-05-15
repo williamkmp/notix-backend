@@ -55,4 +55,7 @@ public class Project {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
     private List<Subproject> subprojects;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
+    private List<ProjectFileDetail> fileDetails;
 }
