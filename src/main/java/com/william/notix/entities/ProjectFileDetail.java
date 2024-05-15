@@ -30,7 +30,9 @@ public class ProjectFileDetail {
     @Column(name = "file_type", nullable = false)
     private FILE_TYPE fileType;
 
-    @OneToOne(mappedBy = "projectDetail")
+    @OneToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "file_id", referencedColumnName = "id", nullable = false)
     private File file;
 
     @ManyToOne
