@@ -72,8 +72,7 @@ public class FileService {
             File newFile = new File()
                 .setName(file.getOriginalFilename())
                 .setBytes(file.getBytes())
-                .setContentType(file.getContentType())
-                .setUploader(uploader);
+                .setContentType(file.getContentType());
 
             newFile = fileRepository.saveAndFlush(newFile);
             return Optional.of(newFile);
@@ -310,11 +309,6 @@ public class FileService {
                     .setContentType(file.getContentType())
                     .setUrl(GET_FILE_URL + file.getId().toString())
                     .setSize(Long.valueOf(file.getBytes().length))
-                    .setUploaderId(
-                        file.getUploader() != null
-                            ? file.getUploader().getId().toString()
-                            : null
-                    )
             );
         } catch (ResourceNotFoundException e) {
             return Optional.empty();
