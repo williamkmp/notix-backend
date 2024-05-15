@@ -30,7 +30,7 @@ public class Action {
     ) {
         try {
             File savedFile = fileService
-                .saveMultipartFile(file, uploader.getId())
+                .saveMultipartFile(file)
                 .orElseThrow(Exception::new);
             FileDto fileInformation = fileService
                 .getFileInfo(savedFile.getId())
