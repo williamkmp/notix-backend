@@ -3,10 +3,11 @@ package com.william.notix.services;
 import com.william.notix.dto.FileDto;
 import com.william.notix.entities.File;
 import com.william.notix.entities.Project;
+import com.william.notix.entities.ProjectFileDetail;
 import com.william.notix.entities.Subproject;
+import com.william.notix.entities.SubprojectFileDetail;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
-import com.william.notix.exceptions.runtime.UserNotFoundException;
 import com.william.notix.repositories.FileRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.SubprojectRepository;
@@ -57,18 +58,12 @@ public class FileService {
      * save multipart-file request to the database
      *
      * @param file {@link MultipartFile} file
-     * @param uploaderId {@link Long} user id, file uploader
      * @return  {@link Optional}<{@link File}> saved file entity, else empty if failed
      */
     public Optional<File> saveMultipartFile(
-        @NonNull MultipartFile file,
-        @NonNull Long uploaderId
+        @NonNull MultipartFile file
     ) {
         try {
-            User uploader = userRepository
-                .findById(uploaderId)
-                .orElseThrow(UserNotFoundException::new);
-
             File newFile = new File()
                 .setName(file.getOriginalFilename())
                 .setBytes(file.getBytes())
@@ -302,6 +297,23 @@ public class FileService {
             File file = fileRepository
                 .findById(fileId)
                 .orElseThrow(ResourceNotFoundException::new);
+
+            String uploaderId = null;
+            if(Objects.nonNull(file.getProjectDetail())) {
+                ProjectFileDetail projectDetail = file.getProjectDetail();
+                User uploader = projectDetail.getUploader();
+                uploaderId = Objects.nonNull(uploader) 
+                    ? uploader.getId().toString() 
+                    : null;
+            }
+            if(Objects.nonNull(file.getSubprojectDetail())) {
+                SubprojectFileDetail subprojectDetail = file.getSubprojectDetail();
+                User uploader = subprojectDetail.getUploader();
+                uploaderId = Objects.nonNull(uploader) 
+                    ? uploader.getId().toString() 
+                    : null;
+            }
+
             return Optional.of(
                 new FileDto()
                     .setId(file.getId().toString())
@@ -309,6 +321,7 @@ public class FileService {
                     .setContentType(file.getContentType())
                     .setUrl(GET_FILE_URL + file.getId().toString())
                     .setSize(Long.valueOf(file.getBytes().length))
+                    .setUploaderId(uploaderId)
             );
         } catch (ResourceNotFoundException e) {
             return Optional.empty();

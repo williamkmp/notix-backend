@@ -154,4 +154,26 @@ public class AuthorityService {
     public boolean roleCanAddSubproject(@NonNull ROLE role) {
         return Objects.equals(role, ROLE.PROJECT_MANAGER);
     }
+
+    /**
+     * check if a given role can upload attachment file
+     *
+     * @param role {@link ROLE}
+     * @return {@link boolean} role can upload attachment file
+     */
+    public boolean roleCanUploadAttcahment(@NonNull ROLE role) {
+        return Objects.equals(role, ROLE.DEVELOPER) ||
+            Objects.equals(role, ROLE.PROJECT_MANAGER); 
+    }
+
+    /**
+     * check if a given role can upload report file
+     *
+     * @param role {@link ROLE}
+     * @return {@link boolean} role can upload report file
+     */
+    public boolean roleCanUploadReport(@NonNull ROLE role) {
+        return Objects.equals(role, ROLE.TECHNICAL_WRITER) ||
+            Objects.equals(role, ROLE.PROJECT_MANAGER); 
+    }
 }

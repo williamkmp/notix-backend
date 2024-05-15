@@ -3,15 +3,20 @@ package com.william.notix.services;
 import com.william.notix.dto.InviteDto;
 import com.william.notix.dto.ProjectDto;
 import com.william.notix.entities.Authority;
+import com.william.notix.entities.File;
 import com.william.notix.entities.Project;
+import com.william.notix.entities.ProjectFileDetail;
 import com.william.notix.entities.ProjectLog;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.exceptions.runtime.UserNotFoundException;
 import com.william.notix.repositories.AuthorityRepository;
+import com.william.notix.repositories.FileRepository;
+import com.william.notix.repositories.ProjectFileRepository;
 import com.william.notix.repositories.ProjectLogRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserRepository;
+import com.william.notix.utils.values.FILE_TYPE;
 import com.william.notix.utils.values.ROLE;
 import jakarta.transaction.Transactional;
 import java.util.Date;
@@ -29,11 +34,13 @@ public class ProjectService {
 
     private final LogService logService;
     private final FileService fileService;
+    private final FileRepository fileRepository;
     private final DateTimeService dtmService;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final ProjectLogRepository projectLogRepository;
     private final AuthorityRepository authorityRepository;
+    private final ProjectFileRepository projectFileRepository;
 
     /**
      * insert a new project
@@ -286,6 +293,90 @@ public class ProjectService {
             return Optional.of(updateRecords);
         } catch (Exception e) {
             e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * add file as project attachment
+     * 
+     * @param projectId {@link Long} project id
+     * @param uploaderId {@link Long} user id
+     * @param fileId {@link Long} file id
+     * @return {@link Optional}<{@link ProjectFileDetail}>
+     */
+    @Transactional
+    public Optional<ProjectFileDetail> addAttachmentToProject(
+        @NonNull Long projectId,
+        @NonNull Long uploaderId,
+        @NonNull Long fileId 
+    ) {
+        try {
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(Exception::new);
+            
+            File file = fileRepository
+                .findById(fileId)
+                .orElseThrow(Exception::new);
+            
+            User uploader = userRepository
+                .findById(uploaderId)
+                .orElseThrow(Exception::new);
+            
+            ProjectFileDetail fileDetail = projectFileRepository
+                .save(
+                    new ProjectFileDetail()
+                        .setFile(file)
+                        .setFileType(FILE_TYPE.ATTACHMENT)
+                        .setProject(project)
+                        .setUploader(uploader)
+                );
+
+            return Optional.of(fileDetail);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * add file as project attachment
+     * 
+     * @param projectId {@link Long} project id
+     * @param uploaderId {@link Long} user id
+     * @param fileId {@link Long} file id
+     * @return {@link Optional}<{@link ProjectFileDetail}>
+     */
+    @Transactional
+    public Optional<ProjectFileDetail> addReportToProject(
+        @NonNull Long projectId,
+        @NonNull Long uploaderId,
+        @NonNull Long fileId 
+    ) {
+        try {
+            Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(Exception::new);
+            
+            File file = fileRepository
+                .findById(fileId)
+                .orElseThrow(Exception::new);
+            
+            User uploader = userRepository
+                .findById(uploaderId)
+                .orElseThrow(Exception::new);
+            
+            ProjectFileDetail fileDetail = projectFileRepository
+                .save(
+                    new ProjectFileDetail()
+                        .setFile(file)
+                        .setFileType(FILE_TYPE.REPORT)
+                        .setProject(project)
+                        .setUploader(uploader)
+                );
+
+            return Optional.of(fileDetail);
+        } catch (Exception e) {
             return Optional.empty();
         }
     }

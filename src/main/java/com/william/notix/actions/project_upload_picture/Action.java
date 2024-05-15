@@ -47,7 +47,7 @@ public class Action {
                 .orElseThrow(ResourceNotFoundException::new);
 
             File uploadedImage = fileService
-                .saveMultipartFile(formData, caller.getId())
+                .saveMultipartFile(formData)
                 .orElseThrow(Exception::new);
 
             FileDto imageInfo = fileService

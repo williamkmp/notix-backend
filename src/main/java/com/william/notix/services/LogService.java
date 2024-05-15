@@ -1,10 +1,13 @@
 package com.william.notix.services;
 
 import com.william.notix.dto.LogDto;
+import com.william.notix.entities.File;
 import com.william.notix.entities.Project;
+import com.william.notix.entities.ProjectFileDetail;
 import com.william.notix.entities.ProjectLog;
 import com.william.notix.entities.User;
 import com.william.notix.entities.UserLog;
+import com.william.notix.repositories.ProjectFileRepository;
 import com.william.notix.repositories.ProjectLogRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserLogRespository;
@@ -13,6 +16,7 @@ import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
 import jakarta.transaction.Transactional;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +33,7 @@ public class LogService {
     private final ProjectLogRepository projectLogRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final ProjectFileRepository projectFileRepository;
     private final SimpMessagingTemplate socket;
 
     /**
@@ -434,6 +439,50 @@ public class LogService {
                 .orElseThrow(Exception::new);
 
             socket.convertAndSend(TOPIC.projectLogs(projectId), dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * log project added new attachment/report
+     * 
+     * @param fileDetailId {@link Long} ProjectFileDetail id
+     */
+    @Transactional
+    public void projectNewFile(
+        @NonNull Long fileDetailId
+    ) {
+        try {
+            ProjectFileDetail fileDetail = projectFileRepository
+                .findById(fileDetailId)
+                .orElseThrow(Exception::new);
+
+            User uploader = Objects.requireNonNull(fileDetail.getUploader());
+            Project project = Objects.requireNonNull(fileDetail.getProject());
+            File file = Objects.requireNonNull(fileDetail.getFile());
+
+            String logTitle = switch (fileDetail.getFileType()) {
+				case ATTACHMENT -> "New Attachment";
+				case REPORT -> "New Report";
+            };
+
+            ProjectLog updateRecord = projectLogRepository.saveAndFlush(
+                new ProjectLog()
+                    .setTitle(logTitle)
+                    .setMessage(
+                        "<p><strong>{{user.fullName}}'s</strong> uploaded a new attachment <em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
+                        file.getName() +
+                        "</mark></em></p>"
+                    )
+                    .setRefrencedUser(uploader)
+                    .setUpdatee(project)
+            );
+
+            LogDto dto = serializeProjectLog(updateRecord)
+                .orElseThrow(Exception::new);
+
+            socket.convertAndSend(TOPIC.projectLogs(project.getId()), dto);
         } catch (Exception e) {
             e.printStackTrace();
         }
