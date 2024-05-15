@@ -299,7 +299,7 @@ public class ProjectService {
 
     /**
      * add file as project attachment
-     * 
+     *
      * @param projectId {@link Long} project id
      * @param uploaderId {@link Long} user id
      * @param fileId {@link Long} file id
@@ -309,29 +309,28 @@ public class ProjectService {
     public Optional<ProjectFileDetail> addAttachmentToProject(
         @NonNull Long projectId,
         @NonNull Long uploaderId,
-        @NonNull Long fileId 
+        @NonNull Long fileId
     ) {
         try {
             Project project = projectRepository
                 .findById(projectId)
                 .orElseThrow(Exception::new);
-            
+
             File file = fileRepository
                 .findById(fileId)
                 .orElseThrow(Exception::new);
-            
+
             User uploader = userRepository
                 .findById(uploaderId)
                 .orElseThrow(Exception::new);
-            
-            ProjectFileDetail fileDetail = projectFileRepository
-                .save(
-                    new ProjectFileDetail()
-                        .setFile(file)
-                        .setFileType(FILE_TYPE.ATTACHMENT)
-                        .setProject(project)
-                        .setUploader(uploader)
-                );
+
+            ProjectFileDetail fileDetail = projectFileRepository.save(
+                new ProjectFileDetail()
+                    .setFile(file)
+                    .setFileType(FILE_TYPE.ATTACHMENT)
+                    .setProject(project)
+                    .setUploader(uploader)
+            );
 
             return Optional.of(fileDetail);
         } catch (Exception e) {
@@ -341,7 +340,7 @@ public class ProjectService {
 
     /**
      * add file as project attachment
-     * 
+     *
      * @param projectId {@link Long} project id
      * @param uploaderId {@link Long} user id
      * @param fileId {@link Long} file id
@@ -351,29 +350,28 @@ public class ProjectService {
     public Optional<ProjectFileDetail> addReportToProject(
         @NonNull Long projectId,
         @NonNull Long uploaderId,
-        @NonNull Long fileId 
+        @NonNull Long fileId
     ) {
         try {
             Project project = projectRepository
                 .findById(projectId)
                 .orElseThrow(Exception::new);
-            
+
             File file = fileRepository
                 .findById(fileId)
                 .orElseThrow(Exception::new);
-            
+
             User uploader = userRepository
                 .findById(uploaderId)
                 .orElseThrow(Exception::new);
-            
-            ProjectFileDetail fileDetail = projectFileRepository
-                .save(
-                    new ProjectFileDetail()
-                        .setFile(file)
-                        .setFileType(FILE_TYPE.REPORT)
-                        .setProject(project)
-                        .setUploader(uploader)
-                );
+
+            ProjectFileDetail fileDetail = projectFileRepository.save(
+                new ProjectFileDetail()
+                    .setFile(file)
+                    .setFileType(FILE_TYPE.REPORT)
+                    .setProject(project)
+                    .setUploader(uploader)
+            );
 
             return Optional.of(fileDetail);
         } catch (Exception e) {

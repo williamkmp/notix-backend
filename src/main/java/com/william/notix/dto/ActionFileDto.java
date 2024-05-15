@@ -2,7 +2,6 @@ package com.william.notix.dto;
 
 import com.william.notix.utils.values.ACTION;
 import com.william.notix.utils.values.FILE_TYPE;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;

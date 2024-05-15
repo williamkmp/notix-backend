@@ -162,8 +162,10 @@ public class AuthorityService {
      * @return {@link boolean} role can upload attachment file
      */
     public boolean roleCanUploadAttcahment(@NonNull ROLE role) {
-        return Objects.equals(role, ROLE.DEVELOPER) ||
-            Objects.equals(role, ROLE.PROJECT_MANAGER); 
+        return (
+            Objects.equals(role, ROLE.DEVELOPER) ||
+            Objects.equals(role, ROLE.PROJECT_MANAGER)
+        );
     }
 
     /**
@@ -173,7 +175,9 @@ public class AuthorityService {
      * @return {@link boolean} role can upload report file
      */
     public boolean roleCanUploadReport(@NonNull ROLE role) {
-        return Objects.equals(role, ROLE.TECHNICAL_WRITER) ||
-            Objects.equals(role, ROLE.PROJECT_MANAGER); 
+        return (
+            Objects.equals(role, ROLE.TECHNICAL_WRITER) ||
+            Objects.equals(role, ROLE.PROJECT_MANAGER)
+        );
     }
 }

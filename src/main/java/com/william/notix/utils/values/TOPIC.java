@@ -85,12 +85,12 @@ public class TOPIC {
 
     /**
      * STOMP destination url for /topic/project/{projectId}/files
-     * 
+     *
      * @param projectId {@link Long} project id
      * @return {@link String} STOMP destination path
      */
-    public static String projectFile(Long projectId){
-        return "/topic/project" + projectId.toString() + "/files";        
+    public static String projectFile(Long projectId) {
+        return "/topic/project" + projectId.toString() + "/files";
     }
 
     /**

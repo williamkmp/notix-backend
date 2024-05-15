@@ -60,9 +60,7 @@ public class FileService {
      * @param file {@link MultipartFile} file
      * @return  {@link Optional}<{@link File}> saved file entity, else empty if failed
      */
-    public Optional<File> saveMultipartFile(
-        @NonNull MultipartFile file
-    ) {
+    public Optional<File> saveMultipartFile(@NonNull MultipartFile file) {
         try {
             File newFile = new File()
                 .setName(file.getOriginalFilename())
@@ -299,19 +297,22 @@ public class FileService {
                 .orElseThrow(ResourceNotFoundException::new);
 
             String uploaderId = null;
-            if(Objects.nonNull(file.getProjectDetail())) {
+            if (Objects.nonNull(file.getProjectDetail())) {
                 ProjectFileDetail projectDetail = file.getProjectDetail();
                 User uploader = projectDetail.getUploader();
-                uploaderId = Objects.nonNull(uploader) 
-                    ? uploader.getId().toString() 
-                    : null;
+                uploaderId =
+                    Objects.nonNull(uploader)
+                        ? uploader.getId().toString()
+                        : null;
             }
-            if(Objects.nonNull(file.getSubprojectDetail())) {
-                SubprojectFileDetail subprojectDetail = file.getSubprojectDetail();
+            if (Objects.nonNull(file.getSubprojectDetail())) {
+                SubprojectFileDetail subprojectDetail =
+                    file.getSubprojectDetail();
                 User uploader = subprojectDetail.getUploader();
-                uploaderId = Objects.nonNull(uploader) 
-                    ? uploader.getId().toString() 
-                    : null;
+                uploaderId =
+                    Objects.nonNull(uploader)
+                        ? uploader.getId().toString()
+                        : null;
             }
 
             return Optional.of(

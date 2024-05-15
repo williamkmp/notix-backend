@@ -446,13 +446,11 @@ public class LogService {
 
     /**
      * log project added new attachment/report
-     * 
+     *
      * @param fileDetailId {@link Long} ProjectFileDetail id
      */
     @Transactional
-    public void projectNewFile(
-        @NonNull Long fileDetailId
-    ) {
+    public void projectNewFile(@NonNull Long fileDetailId) {
         try {
             ProjectFileDetail fileDetail = projectFileRepository
                 .findById(fileDetailId)
@@ -462,10 +460,11 @@ public class LogService {
             Project project = Objects.requireNonNull(fileDetail.getProject());
             File file = Objects.requireNonNull(fileDetail.getFile());
 
-            String logTitle = switch (fileDetail.getFileType()) {
-				case ATTACHMENT -> "New Attachment";
-				case REPORT -> "New Report";
-            };
+            String logTitle =
+                switch (fileDetail.getFileType()) {
+                    case ATTACHMENT -> "New Attachment";
+                    case REPORT -> "New Report";
+                };
 
             ProjectLog updateRecord = projectLogRepository.saveAndFlush(
                 new ProjectLog()

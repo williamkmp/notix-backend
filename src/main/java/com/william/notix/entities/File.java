@@ -1,11 +1,5 @@
 package com.william.notix.entities;
 
-import java.util.Date;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,9 +9,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Accessors(chain = true)
@@ -42,12 +40,20 @@ public class File {
 
     @OneToOne(mappedBy = "file")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "project_file_detail_id", referencedColumnName = "id" , nullable = true)
+    @JoinColumn(
+        name = "project_file_detail_id",
+        referencedColumnName = "id",
+        nullable = true
+    )
     private ProjectFileDetail projectDetail;
 
     @OneToOne(mappedBy = "file")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "subproject_file_detail_id", referencedColumnName = "id" , nullable = true)
+    @JoinColumn(
+        name = "subproject_file_detail_id",
+        referencedColumnName = "id",
+        nullable = true
+    )
     private SubprojectFileDetail subprojectDetail;
 
     @CreationTimestamp

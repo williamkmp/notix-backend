@@ -1,12 +1,5 @@
 package com.william.notix.actions.project_upload_report;
 
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
@@ -29,15 +22,20 @@ import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.ACTION;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Controller("projectUploadReport")
 @RequiredArgsConstructor
 public class Action {
-    
+
     private final FileService fileService;
     private final ProjectService projectService;
     private final AuthorityService authorityService;
@@ -45,7 +43,7 @@ public class Action {
 
     @Authenticated(true)
     @PostMapping("/project/{projectId}/report")
-    public void handle (
+    public void handle(
         @PathVariable("projectId") Long projectId,
         @RequestParam("file") MultipartFile file,
         @SessionUuid String sessionUuid,
@@ -55,36 +53,37 @@ public class Action {
             Project project = projectService
                 .findById(projectId)
                 .orElseThrow(ResourceNotFoundException::new);
-                
+
             ROLE uploaderRole = authorityService
                 .getUserProjectRole(uploader.getId(), project.getId())
                 .orElseThrow(UnauthorizedException::new);
-            
-            boolean canUploadReport = authorityService
-                .roleCanUploadReport(uploaderRole);
 
-            if(!canUploadReport) {
+            boolean canUploadReport = authorityService.roleCanUploadReport(
+                uploaderRole
+            );
+
+            if (!canUploadReport) {
                 throw new ForbiddenException();
             }
-            
+
             File savedFile = fileService
                 .saveMultipartFile(file)
                 .orElseThrow(Exception::new);
-            
+
             projectService
                 .addReportToProject(
-                    project.getId(), 
-                    uploader.getId(), 
+                    project.getId(),
+                    uploader.getId(),
                     savedFile.getId()
                 )
                 .orElseThrow(Exception::new);
-            
+
             FileDto fileInfo = fileService
                 .getFileInfo(savedFile.getId())
                 .orElseThrow();
-            
+
             socket.convertAndSend(
-                TOPIC.projectFile(projectId), 
+                TOPIC.projectFile(projectId),
                 new ActionFileDto()
                     .setAction(ACTION.ADD)
                     .setType(fileInfo.getType())
@@ -94,7 +93,7 @@ public class Action {
                     .setSize(fileInfo.getSize())
                     .setUploaderId(fileInfo.getUploaderId())
                     .setUrl(fileInfo.getUrl())
-            );      
+            );
         } catch (ResourceNotFoundException e) {
             throw new NotFoundProjectException()
                 .setSessionUuid(sessionUuid)
@@ -113,9 +112,7 @@ public class Action {
         } catch (Exception e) {
             log
                 .atError()
-                .setMessage(
-                    "Error [POST] /project/{}/report, callerId:{}"
-                )
+                .setMessage("Error [POST] /project/{}/report, callerId:{}")
                 .addArgument(projectId.toString())
                 .addArgument(uploader.getId().toString());
             e.printStackTrace();
@@ -125,5 +122,4 @@ public class Action {
                 .setUserId(uploader.getId());
         }
     }
-
 }
