@@ -75,11 +75,11 @@ public class Action {
                 TOPIC.projectSubprojects(project.getId()),
                 new SubprojectActionDto()
                     .setAction(ACTION.ADD)
-                    .setName(createdSubproject.getName())
-                    .setProjectId(project.getId().toString())
                     .setId(createdSubproject.getId().toString())
+                    .setProjectId(project.getId().toString())
+                    .setName(createdSubproject.getName())
                     .setStartDate(createdSubproject.getStartDate())
-                    .setStartDate(createdSubproject.getEndDate())
+                    .setEndDate(createdSubproject.getEndDate())
             );
         } catch (ResourceNotFoundException e) {
             throw new NotFoundProjectException()
