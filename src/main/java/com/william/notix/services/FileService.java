@@ -12,6 +12,8 @@ import com.william.notix.repositories.FileRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.SubprojectRepository;
 import com.william.notix.repositories.UserRepository;
+import com.william.notix.utils.values.FILE_TYPE;
+
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
@@ -298,9 +300,11 @@ public class FileService {
                 .orElseThrow(ResourceNotFoundException::new);
 
             String uploaderId = null;
+            FILE_TYPE fileType = FILE_TYPE.PUBLIC;
             if (Objects.nonNull(file.getProjectDetail())) {
                 ProjectFileDetail projectDetail = file.getProjectDetail();
                 User uploader = projectDetail.getUploader();
+                fileType = projectDetail.getFileType();
                 uploaderId =
                     Objects.nonNull(uploader)
                         ? uploader.getId().toString()
@@ -310,6 +314,7 @@ public class FileService {
                 SubprojectFileDetail subprojectDetail =
                     file.getSubprojectDetail();
                 User uploader = subprojectDetail.getUploader();
+                fileType = subprojectDetail.getFileType();
                 uploaderId =
                     Objects.nonNull(uploader)
                         ? uploader.getId().toString()
@@ -324,6 +329,7 @@ public class FileService {
                     .setUrl(GET_FILE_URL + file.getId().toString())
                     .setSize(Long.valueOf(file.getBytes().length))
                     .setUploaderId(uploaderId)
+                    .setType(fileType)
             );
         } catch (ResourceNotFoundException e) {
             return Optional.empty();

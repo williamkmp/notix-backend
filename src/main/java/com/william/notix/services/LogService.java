@@ -464,13 +464,14 @@ public class LogService {
                 switch (fileDetail.getFileType()) {
                     case ATTACHMENT -> "New Attachment";
                     case REPORT -> "New Report";
+                    case PUBLIC -> "New File";
                 };
 
             ProjectLog updateRecord = projectLogRepository.saveAndFlush(
                 new ProjectLog()
                     .setTitle(logTitle)
                     .setMessage(
-                        "<p><strong>{{user.fullName}}'s</strong> uploaded a new attachment <em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
+                        "<p><strong>{{user.fullName}}'s</strong> uploaded a new file <em><mark class=\"bg-sky-100 rounded-none px-0.5\">" +
                         file.getName() +
                         "</mark></em></p>"
                     )
