@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @Entity(name = "documents")
 @Table(name = "documents")
 public class Document {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -27,6 +27,5 @@ public class Document {
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "data", columnDefinition = "BYTEA")
-    private Byte[] data; 
-
+    private Byte[] data;
 }

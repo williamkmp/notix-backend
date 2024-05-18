@@ -1,13 +1,5 @@
 package com.william.notix.actions.project_get_files;
 
-import java.util.List;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
@@ -21,9 +13,14 @@ import com.william.notix.exceptions.http.ResourceNotFoundHttpException;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.services.FileService;
 import com.william.notix.services.ProjectService;
-
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Controller("projectGetFiles")
@@ -49,8 +46,9 @@ public class Action {
             List<File> projectFiles = fileService
                 .getProjectFiles(project.getId())
                 .orElseThrow();
-            
-            List<FileDto> fileInfoList = projectFiles.stream()
+
+            List<FileDto> fileInfoList = projectFiles
+                .stream()
                 .map(file -> fileService.getFileInfo(file.getId()).orElse(null))
                 .toList();
 

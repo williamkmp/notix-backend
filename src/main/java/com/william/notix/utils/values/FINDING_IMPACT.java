@@ -5,5 +5,5 @@ public enum FINDING_IMPACT {
     MINOR,
     MODERATE,
     MAJOR,
-    CATASTROPHIC
+    CATASTROPHIC,
 }

@@ -6,5 +6,5 @@ public enum FINDING_CATEGORY {
     IOS,
     ANDROID,
     WEB,
-    MOBILE
+    MOBILE,
 }

@@ -5,5 +5,5 @@ public enum FINDING_PROBABILITY {
     UNLIKELY,
     POSSIBLE,
     LIKELY,
-    CERTAINLY
+    CERTAINLY,
 }
