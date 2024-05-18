@@ -1,34 +1,42 @@
-{
-  "properties": [
-    {
-      "name": "app.security.jwt.access_token.duration",
-      "type": "java.lang.Long",
-      "description": "JWT access token validity time in milisecond"
-    },
-    {
-      "name": "app.security.jwt.refresh_token.duration",
-      "type": "java.lang.Long",
-      "description": "JWT refresh token validity time in milisecond"
-    },
-    {
-      "name": "app.security.jwt.access_token.secret",
-      "type": "java.lang.String",
-      "description": "JWT access token secret"
-    },
-    {
-      "name": "app.security.jwt.refresh_token.secret",
-      "type": "java.lang.String",
-      "description": "JWT refresh secret"
-    },
-    {
-      "name": "spring.application.version",
-      "type": "java.lang.String",
-      "description": "Current application version"
-    },
-    {
-      "name": "app.database.seed",
-      "type": "java.lang.Boolean",
-      "description": "Run the databse seeder when starting the application?, defaults to true"
-    }
-  ]
-}
+{"properties": [
+  {
+    "name": "app.security.jwt.access_token.duration",
+    "type": "java.lang.Long",
+    "description": "JWT access token validity time in milisecond"
+  },
+  {
+    "name": "app.security.jwt.refresh_token.duration",
+    "type": "java.lang.Long",
+    "description": "JWT refresh token validity time in milisecond"
+  },
+  {
+    "name": "app.security.jwt.access_token.secret",
+    "type": "java.lang.String",
+    "description": "JWT access token secret"
+  },
+  {
+    "name": "app.security.jwt.refresh_token.secret",
+    "type": "java.lang.String",
+    "description": "JWT refresh secret"
+  },
+  {
+    "name": "spring.application.version",
+    "type": "java.lang.String",
+    "description": "Current application version"
+  },
+  {
+    "name": "app.database.seed",
+    "type": "java.lang.Boolean",
+    "description": "Run the databse seeder when starting the application?, defaults to true"
+  },
+  {
+    "name": "server.name",
+    "type": "java.lang.String",
+    "description": "Application name"
+  },
+  {
+    "name": "server.collaboration.port",
+    "type": "java.lang.Long",
+    "description": "HocusPocus collaboration port"
+  }
+]}  

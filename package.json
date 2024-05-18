@@ -1,0 +1,17 @@
+{
+  "name": "notix-backend",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@hocuspocus/extension-database": "^2.13.0",
+    "@hocuspocus/server": "^2.13.0",
+    "drizzle-orm": "^0.30.10",
+    "postgres": "^3.4.4"
+  }
+}

@@ -30,7 +30,7 @@ public class Action {
     private final ProjectService projectService;
     private final FileService fileService;
 
-    @GetMapping("/project/{projectId}/picture")
+    @GetMapping("/api/project/{projectId}/file")
     @Authenticated(true)
     public Response<FileDto[]> action(
         @PathVariable("projectId") Long projectId,
