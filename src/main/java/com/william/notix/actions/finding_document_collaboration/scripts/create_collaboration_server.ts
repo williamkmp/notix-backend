@@ -42,9 +42,8 @@ export function createCollaborationServer(
         maxDebounce: param.maxDebounceTime,
         extensions: [
             new Database({
-                // Retrieve data 
+
                 async fetch (data) {
-                    console.log("[HocusPocus] fetch document:", data.documentName);
                     const documentId = parseInt(data.documentName);
                     const resultSet = await db
                         .select()
@@ -54,10 +53,8 @@ export function createCollaborationServer(
                     const documentData = documentRow?.data ?? null;
                     return documentData;
                 },
-    
-                // Store data
+
                 async store(data) {
-                    console.log("[HocusPocus] store document:", data.documentName);
                     const documentId = parseInt(data.documentName);
                     const documentData = data.state;
                     await db
