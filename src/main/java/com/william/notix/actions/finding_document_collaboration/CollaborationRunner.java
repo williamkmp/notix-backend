@@ -54,6 +54,7 @@ public class CollaborationRunner implements CommandLineRunner {
                 "--appPort",
                 collaborationServerPort.toString()
             )
+                .inheritIO()
                 .start();
     }
 
