@@ -8,6 +8,7 @@ import com.william.notix.dto.FileDto;
 import com.william.notix.dto.response.Response;
 import com.william.notix.entities.File;
 import com.william.notix.entities.Project;
+import com.william.notix.entities.ProjectFileDetail;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ForbiddenException;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
@@ -19,6 +20,7 @@ import com.william.notix.exceptions.socket.StandardProjectSocketException;
 import com.william.notix.exceptions.socket.UnauthorizedProjectException;
 import com.william.notix.services.AuthorityService;
 import com.william.notix.services.FileService;
+import com.william.notix.services.LogService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.ACTION;
 import com.william.notix.utils.values.FILE_TYPE;
@@ -42,6 +44,7 @@ public class Action {
     private final FileService fileService;
     private final ProjectService projectService;
     private final AuthorityService authorityService;
+    private final LogService logService;
     private final SimpMessagingTemplate socket;
 
     @Authenticated(true)
@@ -72,7 +75,7 @@ public class Action {
                 .saveMultipartFile(file)
                 .orElseThrow(Exception::new);
 
-            projectService
+            ProjectFileDetail fileDetail = projectService
                 .addAttachmentToProject(
                     project.getId(),
                     uploader.getId(),
@@ -92,6 +95,8 @@ public class Action {
                     .setUploaderId(uploader.getId().toString())
                     .setCreatedAt(savedFile.getCreatedAt())
             );
+
+            logService.projectNewFile(fileDetail.getId());
 
             return new Response<FileDto>()
                 .setMessage(MESSAGES.UPLOAD_SUCCESS)
