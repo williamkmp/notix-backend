@@ -5,6 +5,7 @@ import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
 import com.william.notix.dto.ActionFileDto;
 import com.william.notix.dto.FileDto;
+import com.william.notix.dto.response.Response;
 import com.william.notix.entities.File;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
@@ -20,6 +21,8 @@ import com.william.notix.services.AuthorityService;
 import com.william.notix.services.FileService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.ACTION;
+import com.william.notix.utils.values.FILE_TYPE;
+import com.william.notix.utils.values.MESSAGES;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +45,8 @@ public class Action {
     private final SimpMessagingTemplate socket;
 
     @Authenticated(true)
-    @PostMapping("/project/{projectId}/report")
-    public void handle(
+    @PostMapping("/api/project/{projectId}/report")
+    public Response<FileDto> handle(
         @PathVariable("projectId") Long projectId,
         @RequestParam("file") MultipartFile file,
         @SessionUuid String sessionUuid,
@@ -78,22 +81,31 @@ public class Action {
                 )
                 .orElseThrow(Exception::new);
 
-            FileDto fileInfo = fileService
-                .getFileInfo(savedFile.getId())
-                .orElseThrow();
-
             socket.convertAndSend(
                 TOPIC.projectFile(projectId),
                 new ActionFileDto()
                     .setAction(ACTION.ADD)
-                    .setType(fileInfo.getType())
-                    .setId(fileInfo.getId())
-                    .setName(fileInfo.getName())
-                    .setContentType(fileInfo.getContentType())
-                    .setSize(fileInfo.getSize())
-                    .setUploaderId(fileInfo.getUploaderId())
-                    .setUrl(fileInfo.getUrl())
+                    .setType(FILE_TYPE.REPORT)
+                    .setId(savedFile.getId().toString())
+                    .setName(savedFile.getName())
+                    .setContentType(savedFile.getContentType())
+                    .setSize(Long.valueOf(file.getBytes().length))
+                    .setUploaderId(uploader.getId().toString())
+                    .setCreatedAt(savedFile.getCreatedAt())
             );
+
+            return new Response<FileDto>()
+                .setMessage(MESSAGES.UPLOAD_SUCCESS)
+                .setData(
+                    new FileDto()
+                        .setType(FILE_TYPE.REPORT)
+                        .setId(savedFile.getId().toString())
+                        .setName(savedFile.getName())
+                        .setContentType(savedFile.getContentType())
+                        .setSize(Long.valueOf(file.getBytes().length))
+                        .setUploaderId(uploader.getId().toString())
+                        .setCreatedAt(savedFile.getCreatedAt())
+                );
         } catch (ResourceNotFoundException e) {
             throw new NotFoundProjectException()
                 .setSessionUuid(sessionUuid)

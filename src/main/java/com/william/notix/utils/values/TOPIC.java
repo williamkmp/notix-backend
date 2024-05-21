@@ -90,7 +90,7 @@ public class TOPIC {
      * @return {@link String} STOMP destination path
      */
     public static String projectFile(Long projectId) {
-        return "/topic/project" + projectId.toString() + "/files";
+        return "/topic/project/" + projectId.toString() + "/files";
     }
 
     /**

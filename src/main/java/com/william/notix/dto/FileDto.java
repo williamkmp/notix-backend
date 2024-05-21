@@ -1,6 +1,7 @@
 package com.william.notix.dto;
 
 import com.william.notix.utils.values.FILE_TYPE;
+import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -17,4 +18,5 @@ public class FileDto {
     private String url;
     private FILE_TYPE type;
     private String contentType;
+    private Date createdAt;
 }

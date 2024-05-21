@@ -332,6 +332,8 @@ public class ProjectService {
                     .setUploader(uploader)
             );
 
+            file.setProjectDetail(fileDetail);
+            fileRepository.save(file);
             return Optional.of(fileDetail);
         } catch (Exception e) {
             return Optional.empty();
@@ -373,6 +375,8 @@ public class ProjectService {
                     .setUploader(uploader)
             );
 
+            file.setProjectDetail(fileDetail);
+            fileRepository.save(file);
             return Optional.of(fileDetail);
         } catch (Exception e) {
             return Optional.empty();

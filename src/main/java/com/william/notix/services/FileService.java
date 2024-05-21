@@ -62,6 +62,7 @@ public class FileService {
      * @param file {@link MultipartFile} file
      * @return  {@link Optional}<{@link File}> saved file entity, else empty if failed
      */
+    @Transactional
     public Optional<File> saveMultipartFile(@NonNull MultipartFile file) {
         try {
             File newFile = new File()
@@ -279,18 +280,12 @@ public class FileService {
     }
 
     /**
-     * generate file prview information including:
-     * <ul>
-     *     <li>file id</li>
-     *     <li>file name</li>
-     *     <li>file size in BYTES</li>
-     *     <li>file content-type</li>
-     *     <li>file download URL</li>
-     *     <li>file uploder's user id</li>
-     * </ul>
+     * generate file preview information
+     *
      * @param fileId {@link Long} fileid
      * @return  {@link Optional}<{@link FileDto}> file information, else empty of there's an error generating file data or not found
      */
+    @Transactional
     public Optional<FileDto> getFileInfo(Long fileId) {
         try {
             if (fileId == null) return Optional.empty();
@@ -300,6 +295,7 @@ public class FileService {
 
             String uploaderId = null;
             FILE_TYPE fileType = FILE_TYPE.PUBLIC;
+
             if (Objects.nonNull(file.getProjectDetail())) {
                 ProjectFileDetail projectDetail = file.getProjectDetail();
                 User uploader = projectDetail.getUploader();
@@ -309,6 +305,7 @@ public class FileService {
                         ? uploader.getId().toString()
                         : null;
             }
+
             if (Objects.nonNull(file.getSubprojectDetail())) {
                 SubprojectFileDetail subprojectDetail =
                     file.getSubprojectDetail();
@@ -329,6 +326,7 @@ public class FileService {
                     .setSize(Long.valueOf(file.getBytes().length))
                     .setUploaderId(uploaderId)
                     .setType(fileType)
+                    .setCreatedAt(file.getCreatedAt())
             );
         } catch (ResourceNotFoundException e) {
             return Optional.empty();
