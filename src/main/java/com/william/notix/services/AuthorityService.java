@@ -1,12 +1,15 @@
 package com.william.notix.services;
 
 import com.william.notix.entities.Authority;
+import com.william.notix.entities.File;
 import com.william.notix.entities.Project;
+import com.william.notix.entities.ProjectFileDetail;
 import com.william.notix.entities.Subproject;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.repositories.AuthorityRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.SubprojectRepository;
+import com.william.notix.utils.values.FILE_TYPE;
 import com.william.notix.utils.values.ROLE;
 import jakarta.transaction.Transactional;
 import java.util.Objects;
@@ -22,6 +25,7 @@ public class AuthorityService {
     private final AuthorityRepository authorityRepository;
     private final SubprojectRepository subprojectRepository;
     private final ProjectRepository projectRepository;
+    private final FileService fileService;
 
     /**
      * get the user ROLE in a given project, else return empty if user have no access
@@ -179,5 +183,50 @@ public class AuthorityService {
             Objects.equals(role, ROLE.TECHNICAL_WRITER) ||
             Objects.equals(role, ROLE.PROJECT_MANAGER)
         );
+    }
+
+    /**
+     * check if user can delete a preject file,
+     * return if user can delete a certain project file,
+     * else return Optioan.empty() if user cannot access project
+     *
+     * @param userId {@link Long} user id
+     * @param fileId {@link Long} file id
+     * @return {@link Optional}<{@link Boolean}>
+     */
+    public Optional<Boolean> userCanDeleteProjectFile(
+        @NonNull Long userId,
+        @NonNull Long fileId
+    ) {
+        try {
+            File file = fileService.findById(fileId).orElseThrow();
+
+            ProjectFileDetail fileDetail = Optional
+                .of(file.getProjectDetail())
+                .orElseThrow();
+
+            Project project = fileDetail.getProject();
+            ROLE userRole =
+                this.getUserProjectRole(userId, project.getId()).orElseThrow();
+
+            FILE_TYPE fileType = fileDetail.getFileType();
+            Long uploaderId = fileDetail.getUploader().getId();
+            boolean userIsUploader = Objects.equals(uploaderId, userId);
+
+            Boolean canDelete = Boolean.FALSE;
+            if (userRole == ROLE.PROJECT_MANAGER) {
+                canDelete = Boolean.TRUE;
+            } else if (fileType == FILE_TYPE.ATTACHMENT) {
+                boolean roleMatched = roleCanUploadAttcahment(userRole);
+                canDelete = Boolean.valueOf(roleMatched && userIsUploader);
+            } else if (fileType == FILE_TYPE.REPORT) {
+                boolean roleMatched = roleCanUploadReport(userRole);
+                canDelete = Boolean.valueOf(roleMatched && userIsUploader);
+            }
+
+            return Optional.of(canDelete);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }

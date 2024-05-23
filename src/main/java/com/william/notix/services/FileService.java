@@ -357,4 +357,21 @@ public class FileService {
             return Optional.empty();
         }
     }
+
+    /**
+     * delete a project file
+     *
+     * @param fileId
+     * @return
+     */
+    @Transactional
+    public Optional<File> deleteProjectFileById(@NonNull Long fileId) {
+        try {
+            File file = fileRepository.findById(fileId).orElseThrow();
+            fileRepository.delete(file);
+            return Optional.of(file);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
 }
