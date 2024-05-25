@@ -77,4 +77,29 @@ public interface UserRepository extends JpaRepository<User, Long> {
         """
     )
     List<User> findAllByProject(@Param("projectId") Long projectId);
+
+    /**
+     * find all project member, doesnt include the project owner
+     *
+     * @param projectId {@link Long} project id
+     * @return {@link List}<{@link User}> search results
+     */
+    @Query(
+        """
+           SELECT u FROM users u
+           WHERE u.id IN (
+                SELECT a.user.id
+                FROM authorities a WHERE a.subproject.id = :subprojectId
+           )
+           OR u.id IN (
+                SELECT p.owner.id
+                FROM projects p where p.id = (
+                    SELECT s.project.id
+                    FROM subprojects s
+                    WHERE s.id = :subprojectId 
+                )
+           )
+        """
+    )
+    List<User> findAllBySubproject(@Param("subprojectId") Long subprojectId);
 }

@@ -1,15 +1,18 @@
 package com.william.notix.services;
 
-import com.william.notix.entities.User;
-import com.william.notix.repositories.UserRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.william.notix.entities.User;
+import com.william.notix.repositories.UserRepository;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -155,6 +158,24 @@ public class UserService {
     public Optional<List<User>> findAllByProject(@NonNull Long projectId) {
         try {
             List<User> members = userRepository.findAllByProject(projectId);
+            return Optional.of(members);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * get all subproject member
+     * 
+     * @param subprojectId {@link Long} subproject id
+     * @return subproject member
+     */
+    public Optional<List<User>> findAllBySuproject(
+        @NonNull Long subprojectId
+    ) {
+        try {
+            List<User> members = userRepository.findAllBySubproject(subprojectId);
             return Optional.of(members);
         } catch (Exception e) {
             e.printStackTrace();
