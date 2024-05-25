@@ -1,0 +1,24 @@
+{
+    "recommendations": [
+        "redhat.vscode-community-server-connector",
+        "vscjava.vscode-java-debug",
+        "vscjava.vscode-java-pack",
+        "redhat.java",
+        "vscjava.vscode-lombok",
+        "pkief.material-icon-theme",
+        "vscjava.vscode-maven",
+        "christian-kohler.path-intellisense",
+        "vscjava.vscode-java-dependency",
+        "redhat.fabric8-analytics",
+        "redhat.vscode-rsp-ui",
+        "sonarsource.sonarlint-vscode",
+        "vscjava.vscode-spring-boot-dashboard",
+        "vmware.vscode-spring-boot",
+        "vscjava.vscode-spring-initializr",
+        "albert.tabout",
+        "vscjava.vscode-java-test",
+        "gruntfuggly.todo-tree",
+        "britesnow.vscode-toggle-quotes",
+        "redhat.vscode-xml"
+    ]
+}

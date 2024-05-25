@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Attach)",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 8000
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-NotixApplication<notix>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.william.notix.NotixApplication",
+            "projectName": "notix",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

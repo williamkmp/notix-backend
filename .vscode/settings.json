@@ -1,0 +1,8 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "maven.view": "hierarchical",
+    "java.compile.nullAnalysis.mode": "disabled",
+    "java.debug.settings.onBuildFailureProceed": false,
+    "java.dependency.packagePresentation": "hierarchical",
+    "java.inlayHints.parameterNames.enabled": "none",
+}
