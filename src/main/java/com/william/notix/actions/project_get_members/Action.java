@@ -45,10 +45,7 @@ public class Action {
                 .orElseThrow(ResourceNotFoundException::new);
 
             authorityService
-                .getUserProjectRole(
-                    caller.getId(), 
-                    project.getId()
-                )
+                .getUserProjectRole(caller.getId(), project.getId())
                 .orElseThrow(ForbiddenException::new);
 
             List<User> users = userService
@@ -88,9 +85,7 @@ public class Action {
         } catch (Exception e) {
             log
                 .atError()
-                .setMessage(
-                    "Error [GET] /api/project/{}/members, callerId:{}"
-                )
+                .setMessage("Error [GET] /api/project/{}/members, callerId:{}")
                 .addArgument(projectId.toString())
                 .addArgument(caller.getId());
             e.printStackTrace();

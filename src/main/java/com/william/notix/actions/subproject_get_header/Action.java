@@ -1,11 +1,5 @@
 package com.william.notix.actions.subproject_get_header;
 
-import java.util.Objects;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.dto.SubprojectHeaderDto;
@@ -20,21 +14,24 @@ import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.services.AuthorityService;
 import com.william.notix.services.SubprojectService;
 import com.william.notix.utils.values.ROLE;
-
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Slf4j
 @Controller("subprojectGetHeader")
 @RequiredArgsConstructor
 public class Action {
-    
+
     private final SubprojectService subprojectService;
     private final AuthorityService authorityService;
 
     @GetMapping("/api/subproject/{subprojectId}")
     @Authenticated(true)
-    public Response<SubprojectHeaderDto> action (
+    public Response<SubprojectHeaderDto> action(
         @PathVariable("subprojectId") Long subprojectId,
         @Caller User caller
     ) {
@@ -49,20 +46,21 @@ public class Action {
 
             String imageId = Objects.nonNull(subproject.getImage())
                 ? subproject.getImage().getId().toString()
-                : null;  
+                : null;
 
             return new Response<SubprojectHeaderDto>()
                 .setData(
                     new SubprojectHeaderDto()
                         .setId(subproject.getId().toString())
                         .setName(subproject.getName())
-                        .setProjectId(subproject.getProject().getId().toString())
+                        .setProjectId(
+                            subproject.getProject().getId().toString()
+                        )
                         .setImageId(imageId)
                         .setRole(userRole)
                         .setStartDate(subproject.getStartDate())
                         .setEndDate(subproject.getEndDate())
                 );
-            
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundHttpException();
         } catch (ForbiddenException e) {
@@ -73,6 +71,4 @@ public class Action {
             throw new InternalServerErrorHttpException();
         }
     }
-
-
 }

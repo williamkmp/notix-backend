@@ -96,7 +96,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 FROM projects p where p.id = (
                     SELECT s.project.id
                     FROM subprojects s
-                    WHERE s.id = :subprojectId 
+                    WHERE s.id = :subprojectId
                 )
            )
         """
