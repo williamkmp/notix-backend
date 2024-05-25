@@ -1,16 +1,6 @@
 package com.william.notix.entities;
 
-import com.william.notix.utils.values.CVSS_ATTACK_COMPLEXITY;
-import com.william.notix.utils.values.CVSS_ATTACK_REQUIREMENTS;
-import com.william.notix.utils.values.CVSS_ATTACK_VECTOR;
-import com.william.notix.utils.values.CVSS_PRIVILEGES_REQUIRED;
-import com.william.notix.utils.values.CVSS_SUBSEQUENT_AVAILABILITY;
-import com.william.notix.utils.values.CVSS_SUBSEQUENT_CONFIDENTIALITY;
-import com.william.notix.utils.values.CVSS_SUBSEQUENT_INTEGRITY;
-import com.william.notix.utils.values.CVSS_USER_INTERACTION;
-import com.william.notix.utils.values.CVSS_VULNERABLE_AVAILABILITY;
-import com.william.notix.utils.values.CVSS_VULNERABLE_CONFIDENTIALITY;
-import com.william.notix.utils.values.CVSS_VULNERABLE_INTEGRITY;
+import com.william.notix.utils.values.CVSS_VALUE;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -39,55 +29,131 @@ public class CvssDetail {
     private Finding finding;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "attack_vector", nullable = false)
-    private CVSS_ATTACK_VECTOR attackVector = CVSS_ATTACK_VECTOR.NETWORK;
+    @Column(name = "AV", nullable = false)
+    private CVSS_VALUE AV = CVSS_VALUE.C0;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "attack_complexity", nullable = false)
-    private CVSS_ATTACK_COMPLEXITY attackComplexity =
-        CVSS_ATTACK_COMPLEXITY.LOW;
+    @Column(name = "AC", nullable = false)
+    private CVSS_VALUE AC = CVSS_VALUE.C0;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "attack_requirements", nullable = false)
-    private CVSS_ATTACK_REQUIREMENTS attackRequirements =
-        CVSS_ATTACK_REQUIREMENTS.NONE;
+    @Column(name = "AT", nullable = false)
+    private CVSS_VALUE AT = CVSS_VALUE.C0;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "privileges_required", nullable = false)
-    private CVSS_PRIVILEGES_REQUIRED privilegesRequired =
-        CVSS_PRIVILEGES_REQUIRED.NONE;
+    @Column(name = "PR", nullable = false)
+    private CVSS_VALUE PR = CVSS_VALUE.C0;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_interaction", nullable = false)
-    private CVSS_USER_INTERACTION userInteraction = CVSS_USER_INTERACTION.NONE;
+    @Column(name = "UI", nullable = false)
+    private CVSS_VALUE UI = CVSS_VALUE.C0;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "vulnerable_confidentiality", nullable = false)
-    private CVSS_VULNERABLE_CONFIDENTIALITY vulnerableConfidentiality =
-        CVSS_VULNERABLE_CONFIDENTIALITY.NONE;
+    @Column(name = "VC", nullable = false)
+    private CVSS_VALUE VC = CVSS_VALUE.C2;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "vulnerable_integrity", nullable = false)
-    private CVSS_VULNERABLE_INTEGRITY vulnerableIntegrity =
-        CVSS_VULNERABLE_INTEGRITY.NONE;
+    @Column(name = "VI", nullable = false)
+    private CVSS_VALUE VI = CVSS_VALUE.C2;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "vulnerable_availability", nullable = false)
-    private CVSS_VULNERABLE_AVAILABILITY vulnerableAvailability =
-        CVSS_VULNERABLE_AVAILABILITY.NONE;
+    @Column(name = "VA", nullable = false)
+    private CVSS_VALUE VA = CVSS_VALUE.C2;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "subsequent_confidentiality", nullable = false)
-    private CVSS_SUBSEQUENT_CONFIDENTIALITY subsequentConfidentiality =
-        CVSS_SUBSEQUENT_CONFIDENTIALITY.NONE;
+    @Column(name = "SC", nullable = false)
+    private CVSS_VALUE SC = CVSS_VALUE.C2;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "subsequent_integrity", nullable = false)
-    private CVSS_SUBSEQUENT_INTEGRITY subsequentIntegrity =
-        CVSS_SUBSEQUENT_INTEGRITY.NONE;
+    @Column(name = "SI", nullable = false)
+    private CVSS_VALUE SI = CVSS_VALUE.C2;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "subsequent_availability", nullable = false)
-    private CVSS_SUBSEQUENT_AVAILABILITY subsequentAvailability =
-        CVSS_SUBSEQUENT_AVAILABILITY.NONE;
+    @Column(name = "SA", nullable = false)
+    private CVSS_VALUE SA = CVSS_VALUE.C2;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "S", nullable = false)
+    private CVSS_VALUE S = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "AU", nullable = false)
+    private CVSS_VALUE AU = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "R", nullable = false)
+    private CVSS_VALUE R = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "V", nullable = false)
+    private CVSS_VALUE V = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "RE", nullable = false)
+    private CVSS_VALUE RE = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "U", nullable = false)
+    private CVSS_VALUE U = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MAV", nullable = false)
+    private CVSS_VALUE MAV = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MAC", nullable = false)
+    private CVSS_VALUE MAC = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MAT", nullable = false)
+    private CVSS_VALUE MAT = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MPR", nullable = false)
+    private CVSS_VALUE MPR = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MUI", nullable = false)
+    private CVSS_VALUE MUI = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MVC", nullable = false)
+    private CVSS_VALUE MVC = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MVI", nullable = false)
+    private CVSS_VALUE MVI = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MVA", nullable = false)
+    private CVSS_VALUE MVA = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MSC", nullable = false)
+    private CVSS_VALUE MSC = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MSI", nullable = false)
+    private CVSS_VALUE MSI = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "MSA", nullable = false)
+    private CVSS_VALUE MSA = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "CR", nullable = false)
+    private CVSS_VALUE CR = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "IR", nullable = false)
+    private CVSS_VALUE IR = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "AR", nullable = false)
+    private CVSS_VALUE AR = CVSS_VALUE.C0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "E", nullable = false)
+    private CVSS_VALUE E = CVSS_VALUE.C0;
 }
+
