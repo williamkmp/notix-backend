@@ -15,7 +15,7 @@ public interface SubprojectlogRepository
     @Query(
         """
         SELECT log
-        FROM  suproject_logs log
+        FROM  subproject_logs log
         WHERE log.updatee.id = :subprojectId
         ORDER BY createdAt DESC
         """
