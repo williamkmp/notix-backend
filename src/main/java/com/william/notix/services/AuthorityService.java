@@ -8,7 +8,6 @@ import com.william.notix.repositories.ProjectAuthorityRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.SubprojectAuthorityRepository;
 import com.william.notix.repositories.SubprojectRepository;
-import com.william.notix.repositories.UserRepository;
 import com.william.notix.utils.values.PROJECT_ROLE;
 import com.william.notix.utils.values.ROLE;
 import jakarta.transaction.Transactional;
@@ -26,8 +25,6 @@ public class AuthorityService {
     private final SubprojectAuthorityRepository subprojectAuthorityRepository;
     private final SubprojectRepository subprojectRepository;
     private final ProjectRepository projectRepository;
-    private final UserRepository userRepository;
-    private final FileService fileService;
 
     /**
      * get the user ROLE in a given project, else return empty if user have no access
