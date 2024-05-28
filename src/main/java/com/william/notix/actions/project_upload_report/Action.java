@@ -64,7 +64,7 @@ public class Action {
                 .getUserProjectRole(uploader.getId(), project.getId())
                 .orElseThrow(UnauthorizedException::new);
 
-            boolean canUploadReport = authorityService.roleCanUploadReport(
+            boolean canUploadReport = authorityService.roleCanOperateReport(
                 uploaderRole
             );
 

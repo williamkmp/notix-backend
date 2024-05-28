@@ -1,9 +1,7 @@
 package com.william.notix.utils.values;
 
-public enum ROLE {
-    CONSULTANT,
+public enum PROJECT_ROLE {
     MEMBER,
     DEVELOPER,
     TECHNICAL_WRITER,
-    PROJECT_MANAGER,
 }

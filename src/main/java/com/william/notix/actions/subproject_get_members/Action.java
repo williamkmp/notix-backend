@@ -50,7 +50,7 @@ public class Action {
                 .orElseThrow(ForbiddenException::new);
 
             List<User> memberList = userService
-                .findAllBySuproject(subproject.getId())
+                .findAllByProject(subproject.getProject().getId())
                 .orElseThrow();
 
             List<MemberDto> members = new ArrayList<>();

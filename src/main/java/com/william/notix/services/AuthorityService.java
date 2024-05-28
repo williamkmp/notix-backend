@@ -1,15 +1,15 @@
 package com.william.notix.services;
 
-import com.william.notix.entities.Authority;
-import com.william.notix.entities.File;
 import com.william.notix.entities.Project;
-import com.william.notix.entities.ProjectFileDetail;
+import com.william.notix.entities.ProjectAuthority;
 import com.william.notix.entities.Subproject;
-import com.william.notix.exceptions.runtime.ResourceNotFoundException;
-import com.william.notix.repositories.AuthorityRepository;
+import com.william.notix.entities.SubprojectAuthority;
+import com.william.notix.repositories.ProjectAuthorityRepository;
 import com.william.notix.repositories.ProjectRepository;
+import com.william.notix.repositories.SubprojectAuthorityRepository;
 import com.william.notix.repositories.SubprojectRepository;
-import com.william.notix.utils.values.FILE_TYPE;
+import com.william.notix.repositories.UserRepository;
+import com.william.notix.utils.values.PROJECT_ROLE;
 import com.william.notix.utils.values.ROLE;
 import jakarta.transaction.Transactional;
 import java.util.Objects;
@@ -22,9 +22,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class AuthorityService {
 
-    private final AuthorityRepository authorityRepository;
+    private final ProjectAuthorityRepository projectAuthorityRepository;
+    private final SubprojectAuthorityRepository subprojectAuthorityRepository;
     private final SubprojectRepository subprojectRepository;
     private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
     private final FileService fileService;
 
     /**
@@ -32,7 +34,7 @@ public class AuthorityService {
      *
      * @param userId {@link Long} user id
      * @param projectId {@link Long} project id
-     * @return {@link Optional}<{@link ROLE}> user's role, else empty
+     * @return {@link Optional}<{@link PROJECT_ROLE}> user's role, else empty
      */
     public Optional<ROLE> getUserProjectRole(
         @NonNull Long userId,
@@ -46,13 +48,31 @@ public class AuthorityService {
             if (Objects.equals(userId, ownerId)) {
                 return Optional.of(ROLE.PROJECT_MANAGER);
             }
-            Authority authority = authorityRepository
+            ProjectAuthority authority = projectAuthorityRepository
                 .findByUserAndProject(userId, projectId)
                 .orElseThrow(Exception::new);
-            return Optional.ofNullable(authority.getRole());
+            ROLE userRole = mapProjectRole(authority.getRole());
+            return Optional.ofNullable(userRole);
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * map project role to a given role
+     *
+     * @param projectRole
+     * @return
+     */
+    public ROLE mapProjectRole(@NonNull PROJECT_ROLE projectRole) {
+        return switch (projectRole) {
+            case DEVELOPER -> ROLE.DEVELOPER;
+            case MEMBER -> ROLE.MEMBER;
+            case TECHNICAL_WRITER -> ROLE.TECHNICAL_WRITER;
+            default -> throw new IllegalArgumentException(
+                "Unexpected value: " + projectRole
+            );
+        };
     }
 
     /**
@@ -60,7 +80,7 @@ public class AuthorityService {
      *
      * @param userId {@link Long} user id
      * @param subprojectId {@link Long} project id
-     * @return {@link Optional}<{@link ROLE}> user's role, else empty
+     * @return {@link Optional}<{@link PROJECT_ROLE}> user's role, else empty
      */
     @Transactional
     public Optional<ROLE> getUserSubprojectRole(
@@ -68,26 +88,37 @@ public class AuthorityService {
         @NonNull Long subprojectId
     ) {
         try {
-            Optional<Authority> authority =
-                authorityRepository.findByUserAndSubproject(
-                    userId,
-                    subprojectId
-                );
-            if (authority.isPresent()) {
-                return Optional.of(authority.get().getRole());
-            }
-
             Subproject subproject = subprojectRepository
                 .findById(subprojectId)
-                .orElseThrow(ResourceNotFoundException::new);
-            Project parentProject = subproject.getProject();
-            Long ownerId = parentProject.getOwner().getId();
-            boolean isUserOwner = Objects.equals(ownerId, userId);
-            if (isUserOwner) {
+                .orElseThrow();
+
+            Long ownerId = subproject.getProject().getOwner().getId();
+            if (Objects.equals(ownerId, userId)) {
                 return Optional.of(ROLE.PROJECT_MANAGER);
             }
 
-            return Optional.empty();
+            Long projectId = subproject.getProject().getId();
+            ProjectAuthority projectAuthority = projectAuthorityRepository
+                .findByUserAndProject(userId, projectId)
+                .orElseThrow();
+
+            Optional<SubprojectAuthority> subprojectAuthority =
+                subprojectAuthorityRepository.findByUserAndProject(
+                    userId,
+                    projectId
+                );
+
+            PROJECT_ROLE projecRole = projectAuthority.getRole();
+
+            if (
+                Objects.equals(projecRole, PROJECT_ROLE.MEMBER) &&
+                subprojectAuthority.isPresent()
+            ) {
+                return Optional.of(ROLE.CONSULTANT);
+            }
+
+            ROLE userRole = mapProjectRole(projecRole);
+            return Optional.of(userRole);
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -98,28 +129,21 @@ public class AuthorityService {
      *
      * @param userId {@link Long} user id
      * @param projectId {@link Long} project id
-     * @param newRole {@link ROLE} new role
-     * @return {@link Optional}<{@link ROLE}> new role, else empty if fails
+     * @param newRole {@link PROJECT_ROLE} new role
+     * @return {@link Optional}<{@link PROJECT_ROLE}> new role, else empty if fails
      */
     @Transactional
-    public Optional<ROLE> updateMemberRole(
+    public Optional<PROJECT_ROLE> updateMemberRole(
         @NonNull Long userId,
         @NonNull Long projectId,
-        @NonNull ROLE newRole
+        @NonNull PROJECT_ROLE newRole
     ) {
         try {
-            Project project = projectRepository
-                .findById(projectId)
-                .orElseThrow(Exception::new);
-            Long ownerId = project.getOwner().getId();
-            if (Objects.equals(userId, ownerId)) {
-                return Optional.of(ROLE.PROJECT_MANAGER);
-            }
-            Authority authority = authorityRepository
+            ProjectAuthority authority = projectAuthorityRepository
                 .findByUserAndProject(userId, projectId)
                 .orElseThrow(Exception::new);
             authority.setRole(newRole);
-            authority = authorityRepository.save(authority);
+            authority = projectAuthorityRepository.save(authority);
             return Optional.of(authority.getRole());
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,7 +179,7 @@ public class AuthorityService {
      * @param role {@link ROLE}
      * @return {@link boolean} role can operate project member
      */
-    public boolean roleCanAddSubproject(@NonNull ROLE role) {
+    public boolean roleCanOperateSubproject(@NonNull ROLE role) {
         return Objects.equals(role, ROLE.PROJECT_MANAGER);
     }
 
@@ -165,11 +189,8 @@ public class AuthorityService {
      * @param role {@link ROLE}
      * @return {@link boolean} role can upload attachment file
      */
-    public boolean roleCanUploadAttcahment(@NonNull ROLE role) {
-        return (
-            Objects.equals(role, ROLE.DEVELOPER) ||
-            Objects.equals(role, ROLE.PROJECT_MANAGER)
-        );
+    public boolean roleCanOperateAttachment(@NonNull ROLE role) {
+        return Objects.equals(role, ROLE.DEVELOPER);
     }
 
     /**
@@ -178,55 +199,7 @@ public class AuthorityService {
      * @param role {@link ROLE}
      * @return {@link boolean} role can upload report file
      */
-    public boolean roleCanUploadReport(@NonNull ROLE role) {
-        return (
-            Objects.equals(role, ROLE.TECHNICAL_WRITER) ||
-            Objects.equals(role, ROLE.PROJECT_MANAGER)
-        );
-    }
-
-    /**
-     * check if user can delete a preject file,
-     * return if user can delete a certain project file,
-     * else return Optioan.empty() if user cannot access project
-     *
-     * @param userId {@link Long} user id
-     * @param fileId {@link Long} file id
-     * @return {@link Optional}<{@link Boolean}>
-     */
-    public Optional<Boolean> userCanDeleteProjectFile(
-        @NonNull Long userId,
-        @NonNull Long fileId
-    ) {
-        try {
-            File file = fileService.findById(fileId).orElseThrow();
-
-            ProjectFileDetail fileDetail = Optional
-                .of(file.getProjectDetail())
-                .orElseThrow();
-
-            Project project = fileDetail.getProject();
-            ROLE userRole =
-                this.getUserProjectRole(userId, project.getId()).orElseThrow();
-
-            FILE_TYPE fileType = fileDetail.getFileType();
-            Long uploaderId = fileDetail.getUploader().getId();
-            boolean userIsUploader = Objects.equals(uploaderId, userId);
-
-            Boolean canDelete = Boolean.FALSE;
-            if (userRole == ROLE.PROJECT_MANAGER) {
-                canDelete = Boolean.TRUE;
-            } else if (fileType == FILE_TYPE.ATTACHMENT) {
-                boolean roleMatched = roleCanUploadAttcahment(userRole);
-                canDelete = Boolean.valueOf(roleMatched && userIsUploader);
-            } else if (fileType == FILE_TYPE.REPORT) {
-                boolean roleMatched = roleCanUploadReport(userRole);
-                canDelete = Boolean.valueOf(roleMatched && userIsUploader);
-            }
-
-            return Optional.of(canDelete);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+    public boolean roleCanOperateReport(@NonNull ROLE role) {
+        return Objects.equals(role, ROLE.TECHNICAL_WRITER);
     }
 }

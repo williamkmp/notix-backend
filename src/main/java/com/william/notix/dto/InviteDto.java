@@ -1,6 +1,6 @@
 package com.william.notix.dto;
 
-import com.william.notix.utils.values.ROLE;
+import com.william.notix.utils.values.PROJECT_ROLE;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -13,5 +13,5 @@ public class InviteDto {
 
     @NonNull private String email;
 
-    @NonNull private ROLE role;
+    @NonNull private PROJECT_ROLE role;
 }

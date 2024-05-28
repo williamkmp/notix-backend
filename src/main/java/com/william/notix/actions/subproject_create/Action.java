@@ -55,7 +55,7 @@ public class Action {
                 .orElseThrow(UnauthorizedException::new);
 
             boolean canAddOperateSubproject =
-                authorityService.roleCanAddSubproject(callerRole);
+                authorityService.roleCanOperateSubproject(callerRole);
 
             if (!canAddOperateSubproject) {
                 throw new ForbiddenException();

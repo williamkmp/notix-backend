@@ -37,5 +37,4 @@ public class FindingDetail {
     @Column(name = "impact", nullable = true)
     @Enumerated(EnumType.ORDINAL)
     private FINDING_IMPACT impact;
-    
 }

@@ -156,4 +156,3 @@ public class CvssDetail {
     @Column(name = "E", nullable = false)
     private CVSS_VALUE E = CVSS_VALUE.C0;
 }
-

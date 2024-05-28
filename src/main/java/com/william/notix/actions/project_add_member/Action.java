@@ -112,7 +112,9 @@ public class Action {
                         .setEmail(member.getEmail())
                         .setFullName(member.getFullName())
                         .setImageId(memberImageId)
-                        .setRole(invite.getRole())
+                        .setRole(
+                            authorityService.mapProjectRole(invite.getRole())
+                        )
                 );
             }
         } catch (ResourceNotFoundException e) {

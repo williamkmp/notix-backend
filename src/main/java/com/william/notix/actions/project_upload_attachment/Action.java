@@ -65,7 +65,7 @@ public class Action {
                 .orElseThrow(UnauthorizedException::new);
 
             boolean canUploadAttachment =
-                authorityService.roleCanUploadAttcahment(uploaderRole);
+                authorityService.roleCanOperateAttachment(uploaderRole);
 
             if (!canUploadAttachment) {
                 throw new ForbiddenException();

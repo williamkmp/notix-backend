@@ -51,7 +51,7 @@ public class Project {
     private Date createdAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
-    private List<Authority> memberAuthorities;
+    private List<ProjectAuthority> memberAuthorities;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
     private List<Subproject> subprojects;

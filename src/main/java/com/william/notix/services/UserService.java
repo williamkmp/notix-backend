@@ -161,22 +161,4 @@ public class UserService {
             return Optional.empty();
         }
     }
-
-    /**
-     * get all subproject member
-     *
-     * @param subprojectId {@link Long} subproject id
-     * @return subproject member
-     */
-    public Optional<List<User>> findAllBySuproject(@NonNull Long subprojectId) {
-        try {
-            List<User> members = userRepository.findAllBySubproject(
-                subprojectId
-            );
-            return Optional.of(members);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
-    }
 }

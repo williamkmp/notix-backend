@@ -4,6 +4,7 @@ import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
 import com.william.notix.dto.ActionFileDto;
 import com.william.notix.dto.FileDto;
+import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ForbiddenException;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
@@ -17,7 +18,10 @@ import com.william.notix.services.AuthorityService;
 import com.william.notix.services.FileService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.utils.values.ACTION;
+import com.william.notix.utils.values.FILE_TYPE;
+import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -46,21 +50,25 @@ public class Action {
         try {
             Long targetFileId = Long.valueOf(payload.getFileId());
 
-            projectService
+            Project project = projectService
                 .findById(projectId)
                 .orElseThrow(ResourceNotFoundException::new);
 
-            Boolean canDelete = authorityService
-                .userCanDeleteProjectFile(caller.getId(), targetFileId)
+            ROLE userRole = authorityService
+                .getUserProjectRole(caller.getId(), project.getId())
                 .orElseThrow(UnauthorizedException::new);
-
-            if (Boolean.FALSE == canDelete) {
-                throw new ForbiddenException();
-            }
 
             FileDto fileInfo = fileService
                 .getFileInfo(targetFileId)
                 .orElseThrow();
+
+            boolean canDeleteFile =
+                (Objects.equals(fileInfo.getType(), FILE_TYPE.ATTACHMENT) &&
+                    authorityService.roleCanOperateAttachment(userRole)) ||
+                (Objects.equals(fileInfo.getType(), FILE_TYPE.REPORT) &&
+                    authorityService.roleCanOperateReport(userRole));
+
+            if (!canDeleteFile) throw new ForbiddenException();
 
             fileService.deleteProjectFileById(targetFileId);
 

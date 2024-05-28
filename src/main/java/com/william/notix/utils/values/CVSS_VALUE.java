@@ -1,10 +1,10 @@
 package com.william.notix.utils.values;
 
 /**
- * CVSS value corespond to the column value 
- * 
- * see   
- * 
+ * CVSS value corespond to the column value
+ *
+ * see
+ *
  */
 public enum CVSS_VALUE {
     C0,

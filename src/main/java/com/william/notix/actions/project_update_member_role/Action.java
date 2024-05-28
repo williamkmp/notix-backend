@@ -3,7 +3,6 @@ package com.william.notix.actions.project_update_member_role;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
 import com.william.notix.dto.MemberActionDto;
-import com.william.notix.dto.MemberDto;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ForbiddenException;
@@ -20,6 +19,7 @@ import com.william.notix.services.LogService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.services.UserService;
 import com.william.notix.utils.values.ACTION;
+import com.william.notix.utils.values.PROJECT_ROLE;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
 import java.util.Objects;
@@ -45,7 +45,7 @@ public class Action {
     @MessageMapping("/project/{projectId}/member.update")
     public void action(
         @DestinationVariable("projectId") Long projectId,
-        @Payload MemberDto payload,
+        @Payload Request payload,
         @SessionUuid String sessionUuid,
         @Caller User caller
     ) throws StandardProjectSocketException {
@@ -78,7 +78,7 @@ public class Action {
                 return;
             }
 
-            ROLE updatedRole = authorityService
+            PROJECT_ROLE updatedRole = authorityService
                 .updateMemberRole(
                     member.getId(),
                     project.getId(),
@@ -104,7 +104,7 @@ public class Action {
                     .setEmail(member.getEmail())
                     .setFullName(member.getFullName())
                     .setImageId(memberImageId)
-                    .setRole(updatedRole)
+                    .setRole(authorityService.mapProjectRole(updatedRole))
             );
         } catch (ResourceNotFoundException e) {
             throw new NotFoundProjectException()

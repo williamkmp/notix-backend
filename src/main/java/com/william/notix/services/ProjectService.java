@@ -2,22 +2,22 @@ package com.william.notix.services;
 
 import com.william.notix.dto.InviteDto;
 import com.william.notix.dto.ProjectDto;
-import com.william.notix.entities.Authority;
 import com.william.notix.entities.File;
 import com.william.notix.entities.Project;
+import com.william.notix.entities.ProjectAuthority;
 import com.william.notix.entities.ProjectFileDetail;
 import com.william.notix.entities.ProjectLog;
 import com.william.notix.entities.User;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.exceptions.runtime.UserNotFoundException;
-import com.william.notix.repositories.AuthorityRepository;
 import com.william.notix.repositories.FileRepository;
+import com.william.notix.repositories.ProjectAuthorityRepository;
 import com.william.notix.repositories.ProjectFileRepository;
 import com.william.notix.repositories.ProjectLogRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserRepository;
 import com.william.notix.utils.values.FILE_TYPE;
-import com.william.notix.utils.values.ROLE;
+import com.william.notix.utils.values.PROJECT_ROLE;
 import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +39,7 @@ public class ProjectService {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final ProjectLogRepository projectLogRepository;
-    private final AuthorityRepository authorityRepository;
+    private final ProjectAuthorityRepository authorityRepository;
     private final ProjectFileRepository projectFileRepository;
 
     /**
@@ -114,9 +114,9 @@ public class ProjectService {
             Project project = projectRepository
                 .findById(projectId)
                 .orElseThrow(ResourceNotFoundException::new);
-            ROLE memberRole = Optional
+            PROJECT_ROLE memberRole = Optional
                 .ofNullable(invite.getRole())
-                .orElse(ROLE.VIEWER);
+                .orElse(PROJECT_ROLE.MEMBER);
 
             Long ownerId = project.getOwner().getId();
             Long memberId = newMember.getId();
@@ -125,7 +125,7 @@ public class ProjectService {
                 return Optional.of(project.getOwner());
             }
 
-            Optional<Authority> authority =
+            Optional<ProjectAuthority> authority =
                 authorityRepository.findByUserAndProject(memberId, projectId);
 
             if (authority.isPresent()) {
@@ -133,7 +133,7 @@ public class ProjectService {
             }
 
             authorityRepository.save(
-                new Authority()
+                new ProjectAuthority()
                     .setProject(project)
                     .setUser(newMember)
                     .setRole(memberRole)
@@ -257,14 +257,14 @@ public class ProjectService {
         @NonNull Long memberId
     ) {
         try {
-            Optional<Authority> maybeAUthority =
+            Optional<ProjectAuthority> maybeAUthority =
                 authorityRepository.findByUserAndProject(memberId, projectId);
 
             if (maybeAUthority.isEmpty()) {
                 throw new ResourceNotFoundException();
             }
 
-            Authority authority = maybeAUthority.get();
+            ProjectAuthority authority = maybeAUthority.get();
             User member = userRepository
                 .findById(memberId)
                 .orElseThrow(UserNotFoundException::new);

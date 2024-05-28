@@ -12,7 +12,7 @@ import com.william.notix.repositories.ProjectLogRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.UserLogRespository;
 import com.william.notix.repositories.UserRepository;
-import com.william.notix.utils.values.ROLE;
+import com.william.notix.utils.values.PROJECT_ROLE;
 import com.william.notix.utils.values.TOPIC;
 import jakarta.transaction.Transactional;
 import java.util.Date;
@@ -362,13 +362,13 @@ public class LogService {
      *
      * @param projectId {@link Long} project id
      * @param memberId {@link Long} user id
-     * @param role {@link ROLE} new role
+     * @param role {@link PROJECT_ROLE} new role
      */
     @Transactional
     public void projectMemberRoleChange(
         @NonNull Long projectId,
         @NonNull Long memberId,
-        @NonNull ROLE role
+        @NonNull PROJECT_ROLE role
     ) {
         try {
             User member = userRepository
@@ -380,11 +380,9 @@ public class LogService {
 
             String roleDisplayName =
                 switch (role) {
-                    case VIEWER -> "Viewer";
+                    case MEMBER -> "Member";
                     case DEVELOPER -> "Developer";
-                    case PENETRATION_TESTER -> "Tester";
                     case TECHNICAL_WRITER -> "Technical Writer";
-                    case PROJECT_MANAGER -> "Project Manager";
                     default -> throw new IllegalArgumentException(
                         "Unexpected value: " + role
                     );
