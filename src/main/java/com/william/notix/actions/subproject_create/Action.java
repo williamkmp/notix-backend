@@ -2,6 +2,7 @@ package com.william.notix.actions.subproject_create;
 
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
+import com.william.notix.dto.PreviewActionDto;
 import com.william.notix.dto.SubprojectActionDto;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.Subproject;
@@ -18,10 +19,14 @@ import com.william.notix.services.AuthorityService;
 import com.william.notix.services.ProjectService;
 import com.william.notix.services.SubprojectService;
 import com.william.notix.utils.values.ACTION;
+import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
+
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -71,6 +76,10 @@ public class Action {
                 )
                 .orElseThrow(Exception::new);
 
+            String imageId = Objects.nonNull(createdSubproject.getImage())
+                ? createdSubproject.getImage().getId().toString()
+                : null;
+
             socket.convertAndSend(
                 TOPIC.projectSubprojects(project.getId()),
                 new SubprojectActionDto()
@@ -80,6 +89,15 @@ public class Action {
                     .setName(createdSubproject.getName())
                     .setStartDate(createdSubproject.getStartDate())
                     .setEndDate(createdSubproject.getEndDate())
+            );
+
+            socket.convertAndSend(
+                TOPIC.projectPreview(project.getId()),
+                new PreviewActionDto()
+                        .setAction(PREVIEW_ACTION.ADD_CHILD)
+                        .setId(createdSubproject.getId().toString())
+                        .setName(createdSubproject.getName())
+                        .setImageId(imageId)
             );
         } catch (ResourceNotFoundException e) {
             throw new NotFoundProjectException()
