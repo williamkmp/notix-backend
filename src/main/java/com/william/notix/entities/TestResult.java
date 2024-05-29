@@ -3,6 +3,8 @@ package com.william.notix.entities;
 import com.william.notix.utils.values.FINDING_STATUS;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,10 +40,11 @@ public class TestResult {
     )
     private Finding finding;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "version", nullable = false)
     private String version = "";
 
-    @Column(name = "name", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private FINDING_STATUS status = FINDING_STATUS.NOT_RETESTED;
 
     @Column(name = "message", nullable = false, columnDefinition = "TEXT")
