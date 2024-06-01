@@ -2,21 +2,25 @@ package com.william.notix.entities;
 
 import com.william.notix.utils.values.FINDING_CATEGORY;
 import com.william.notix.utils.values.FINDING_IMPACT;
+import com.william.notix.utils.values.FINDING_LIKELIHOOD;
 import com.william.notix.utils.values.FINDING_LOCATION;
 import com.william.notix.utils.values.FINDING_METHOD;
-import com.william.notix.utils.values.FINDING_PROBABILITY;
-import com.william.notix.utils.values.FINDING_STATUS;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
+@Data
+@NoArgsConstructor
+@Accessors(chain = true)
 @Embeddable
 public class FindingDetail {
 
-    @Column(name = "status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private FINDING_STATUS status = FINDING_STATUS.NOT_RETESTED;
+    @Column(name = "is_informational", nullable = true)
+    private boolean isInformational = false;
 
     @Column(name = "category", nullable = true)
     @Enumerated(EnumType.STRING)
@@ -30,9 +34,9 @@ public class FindingDetail {
     @Enumerated(EnumType.STRING)
     private FINDING_METHOD method;
 
-    @Column(name = "probability", nullable = true)
+    @Column(name = "likelihood", nullable = true)
     @Enumerated(EnumType.ORDINAL)
-    private FINDING_PROBABILITY probability;
+    private FINDING_LIKELIHOOD likelihood;
 
     @Column(name = "impact", nullable = true)
     @Enumerated(EnumType.ORDINAL)

@@ -1,9 +1,11 @@
 package com.william.notix.services;
 
+import com.william.notix.entities.Finding;
 import com.william.notix.entities.Project;
 import com.william.notix.entities.ProjectAuthority;
 import com.william.notix.entities.Subproject;
 import com.william.notix.entities.SubprojectAuthority;
+import com.william.notix.entities.User;
 import com.william.notix.repositories.ProjectAuthorityRepository;
 import com.william.notix.repositories.ProjectRepository;
 import com.william.notix.repositories.SubprojectAuthorityRepository;
@@ -119,6 +121,15 @@ public class AuthorityService {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    @Transactional
+    public Optional<ROLE> getRoleOfFinding(
+        @NonNull User user,
+        @NonNull Finding finding
+    ) {
+        Subproject subproject = finding.getSubproject();
+        return getUserSubprojectRole(user.getId(), subproject.getId());
     }
 
     /**

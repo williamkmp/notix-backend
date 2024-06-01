@@ -4,6 +4,7 @@ import com.william.notix.annotations.authenticated.Authenticated;
 import com.william.notix.annotations.caller.Caller;
 import com.william.notix.annotations.session_uuid.SessionUuid;
 import com.william.notix.dto.FileDto;
+import com.william.notix.dto.PreviewActionDto;
 import com.william.notix.dto.ProjectDto;
 import com.william.notix.dto.response.Response;
 import com.william.notix.entities.File;
@@ -14,6 +15,7 @@ import com.william.notix.exceptions.http.ResourceNotFoundHttpException;
 import com.william.notix.exceptions.runtime.ResourceNotFoundException;
 import com.william.notix.services.FileService;
 import com.william.notix.services.ProjectService;
+import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.TOPIC;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +65,15 @@ public class Action {
                 .setOwnerId(caller.getId().toString());
 
             socket.convertAndSend(TOPIC.project(projectId), updatedProjectData);
+
+            socket.convertAndSend(
+                TOPIC.projectPreview(projectId),
+                new PreviewActionDto()
+                    .setAction(PREVIEW_ACTION.UPDATE_SELF)
+                    .setId(projectId.toString())
+                    .setName(project.getName())
+                    .setImageId(null)
+            );
 
             return new Response<ProjectDto>().setData(updatedProjectData);
         } catch (ResourceNotFoundException e) {

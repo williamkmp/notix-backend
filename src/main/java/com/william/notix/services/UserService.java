@@ -1,5 +1,6 @@
 package com.william.notix.services;
 
+import com.william.notix.dto.UserDto;
 import com.william.notix.entities.User;
 import com.william.notix.repositories.UserRepository;
 import java.util.Collections;
@@ -160,5 +161,17 @@ public class UserService {
             e.printStackTrace();
             return Optional.empty();
         }
+    }
+
+    public UserDto mapToDto(@NonNull User user) {
+        return new UserDto()
+            .setId(user.getId().toString())
+            .setFullName(user.getFullName())
+            .setEmail(user.getEmail())
+            .setImageId(
+                Objects.nonNull(user.getImage())
+                    ? user.getImage().getId().toString()
+                    : null
+            );
     }
 }

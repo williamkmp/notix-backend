@@ -38,6 +38,9 @@ public class Finding {
     @Embedded
     private FindingDetail findingDetail;
 
+    @Embedded
+    private CvssDetail cvssDetail;
+
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User creator;
@@ -48,11 +51,6 @@ public class Finding {
     @OneToMany(mappedBy = "finding")
     private List<TestResult> testResults;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "cvss_detail_id", nullable = true)
-    private CvssDetail cvssDetail;
-
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "subproject_id", nullable = false)
@@ -62,6 +60,10 @@ public class Finding {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "document_id", nullable = false)
     private Document document;
+
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "image_id", referencedColumnName = "id", nullable = true)
+    private File image;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

@@ -22,11 +22,9 @@ import com.william.notix.utils.values.ACTION;
 import com.william.notix.utils.values.PREVIEW_ACTION;
 import com.william.notix.utils.values.ROLE;
 import com.william.notix.utils.values.TOPIC;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Objects;
-
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -94,10 +92,10 @@ public class Action {
             socket.convertAndSend(
                 TOPIC.projectPreview(project.getId()),
                 new PreviewActionDto()
-                        .setAction(PREVIEW_ACTION.ADD_CHILD)
-                        .setId(createdSubproject.getId().toString())
-                        .setName(createdSubproject.getName())
-                        .setImageId(imageId)
+                    .setAction(PREVIEW_ACTION.ADD_CHILD)
+                    .setId(createdSubproject.getId().toString())
+                    .setName(createdSubproject.getName())
+                    .setImageId(imageId)
             );
         } catch (ResourceNotFoundException e) {
             throw new NotFoundProjectException()

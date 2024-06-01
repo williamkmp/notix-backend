@@ -48,18 +48,6 @@ public class SubprojectSeeder implements Seeder {
                     .setStartDate(toDate(now.minusWeeks(3)))
                     .setEndDate(toDate(now.minusWeeks(2)))
                     .setCreatedAt(new Date())
-                // new Subproject()
-                //     .setProject(project)
-                //     .setName(projectCode + " - Subproject 4")
-                //     .setStartDate(toDate(now.plusWeeks(1)))
-                //     .setEndDate(toDate(now.plusWeeks(5)))
-                //     .setCreatedAt(new Date()),
-                // new Subproject()
-                //     .setProject(project)
-                //     .setName(projectCode + " - Subproject 5")
-                //     .setStartDate(toDate(now.plusWeeks(3)))
-                //     .setEndDate(toDate(now.plusWeeks(4)))
-                //     .setCreatedAt(new Date())
             );
 
             subprojectRepository.saveAll(subprojects);
