@@ -14,7 +14,6 @@ public class FindingDto {
 
     private String id;
     private String name;
-    private String imageId;
     private String creatorId;
     private Date createdAt;
     private FindingDetail findingDetail;

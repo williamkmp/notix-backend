@@ -17,7 +17,6 @@ import com.william.notix.repositories.SubprojectRepository;
 import com.william.notix.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -63,14 +62,10 @@ public class FindingService {
     @Transactional
     public FindingDto mapToDto(@NonNull Finding finding) {
         User creator = finding.getCreator();
-        String imageId = Objects.nonNull(finding.getImage())
-            ? finding.getImage().getId().toString()
-            : null;
 
         return new FindingDto()
             .setId(finding.getId().toString())
             .setName(finding.getName())
-            .setImageId(imageId)
             .setCvssDetail(finding.getCvssDetail())
             .setFindingDetail(finding.getFindingDetail())
             .setCreatorId(creator.getId().toString())
@@ -83,14 +78,9 @@ public class FindingService {
     }
 
     public PreviewDto createPreview(Finding finding) {
-        String imageId = Objects.nonNull(finding.getImage())
-            ? finding.getImage().getId().toString()
-            : null;
-
         return new PreviewDto()
             .setId(finding.getId().toString())
-            .setName(finding.getName())
-            .setImageId(imageId);
+            .setName(finding.getName());
     }
 
     @Transactional

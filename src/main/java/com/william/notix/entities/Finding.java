@@ -61,10 +61,6 @@ public class Finding {
     @JoinColumn(name = "document_id", nullable = false)
     private Document document;
 
-    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "image_id", referencedColumnName = "id", nullable = true)
-    private File image;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
