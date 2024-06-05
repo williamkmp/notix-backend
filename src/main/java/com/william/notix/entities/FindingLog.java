@@ -27,6 +27,9 @@ public class FindingLog {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "title", nullable = false)
+    private String title = "Update";
+
     @Column(name = "message", nullable = false, columnDefinition = "TEXT")
     private String message = "<p></p>";
 
@@ -38,6 +41,15 @@ public class FindingLog {
         nullable = false
     )
     private User actor;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(
+        name = "user_ref_id",
+        referencedColumnName = "id",
+        nullable = false
+    )
+    private User userRef;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)

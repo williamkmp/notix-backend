@@ -17,10 +17,16 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 @Embeddable
-public class FindingDetail {
+public class FindingProperty {
 
     @Column(name = "is_informational", nullable = true)
     private boolean isInformational = false;
+
+    @Column(name = "application_name", nullable = false)
+    private String applicationName = "";
+
+    @Column(name = "environment", nullable = false)
+    private String environment = "";
 
     @Column(name = "category", nullable = true)
     @Enumerated(EnumType.STRING)

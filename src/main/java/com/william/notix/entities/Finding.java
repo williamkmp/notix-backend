@@ -36,10 +36,10 @@ public class Finding {
     private String name = "";
 
     @Embedded
-    private FindingDetail findingDetail;
+    private FindingProperty findingProperty;
 
     @Embedded
-    private CvssDetail cvssDetail;
+    private Cvss cvss;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)

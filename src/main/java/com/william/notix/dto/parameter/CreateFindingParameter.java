@@ -1,4 +1,4 @@
-package com.william.notix.dto;
+package com.william.notix.dto.parameter;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-public class CreateFindingParameterDto {
+public class CreateFindingParameter {
 
     private Long subprojectId;
     private String findingName;

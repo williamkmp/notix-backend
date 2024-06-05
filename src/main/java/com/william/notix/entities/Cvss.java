@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 @Embeddable
-public class CvssDetail {
+public class Cvss {
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "AV", nullable = false)

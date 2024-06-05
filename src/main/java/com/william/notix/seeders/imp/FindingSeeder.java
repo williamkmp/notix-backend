@@ -1,6 +1,6 @@
 package com.william.notix.seeders.imp;
 
-import com.william.notix.dto.CreateFindingParameterDto;
+import com.william.notix.dto.parameter.CreateFindingParameter;
 import com.william.notix.entities.Subproject;
 import com.william.notix.entities.User;
 import com.william.notix.repositories.SubprojectRepository;
@@ -27,7 +27,7 @@ public class FindingSeeder implements Seeder {
             String subprojectName = subproject.getName();
             User creator = subproject.getProject().getOwner();
             findingService.create(
-                new CreateFindingParameterDto()
+                new CreateFindingParameter()
                     .setCreatorId(creator.getId())
                     .setFindingName(subprojectName + "- Finding")
                     .setSubprojectId(subproject.getId())

@@ -112,4 +112,22 @@ public class TOPIC {
     public static String subproject(Long subprojectId) {
         return "/topic/subproject/" + subprojectId.toString();
     }
+
+    /**
+     * STOMP destination url for finidng log
+     *
+     * @param findingId finding id
+     * @return  STOMP destination path
+     */
+    public static String findingLog(Long findingId) {
+        return "/topic/finding/" + findingId.toString() + "/logs";
+    }
+
+    public static String findingProperty(Long findingId) {
+        return (
+            "/topic/finding/" +
+            findingId.toString() +
+            "/property.update"
+        );
+    }
 }

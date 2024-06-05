@@ -1,7 +1,7 @@
 package com.william.notix.dto;
 
-import com.william.notix.entities.CvssDetail;
-import com.william.notix.entities.FindingDetail;
+import com.william.notix.entities.Cvss;
+import com.william.notix.entities.FindingProperty;
 import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +16,6 @@ public class FindingDto {
     private String name;
     private String creatorId;
     private Date createdAt;
-    private FindingDetail findingDetail;
-    private CvssDetail cvssDetail;
+    private FindingProperty findingDetail;
+    private Cvss cvssDetail;
 }
